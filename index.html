@@ -613,10 +613,9 @@ function renderCarrito() {
       '</div>';
     }).join('') +
     '<div class="total-bar">' +
-      '<div>' +
-        '<div class="total-label">Total del pedido (ARS)</div>' +
-        '<div class="total-valor">' + fmtNum(total) + '</div>' +
-      '</div>' +
+      '<div class="total-label">Total del pedido (ARS)</div>' +
+      '<div style="flex:1"></div>' +
+      '<div class="total-valor">' + fmtNum(total) + '</div>' +
     '</div>' +
     '<div class="cart-actions">' +
       '<button class="btn-vaciar" onclick="vaciarCarrito()"><i class="ti ti-trash"></i> Vaciar carrito</button>' +
@@ -646,8 +645,8 @@ function descargarPNG() {
 
   var rows = carrito.map(function(c){
     return '<tr>' +
-      '<td>' + cap(c.nombre) + '</td>' +
       '<td class="num">' + c.qty + '</td>' +
+      '<td>' + cap(c.nombre) + '</td>' +
       '<td class="num">' + fmtNum(c.precio) + '</td>' +
       '<td class="num"><strong>' + fmtNum(c.precio * c.qty) + '</strong></td>' +
     '</tr>';
@@ -662,8 +661,8 @@ function descargarPNG() {
     '</div>' +
     '<table class="ticket-table">' +
       '<thead><tr>' +
+        '<th class="num" style="width:60px">Cant.</th>' +
         '<th>Producto</th>' +
-        '<th class="num">Cantidad</th>' +
         '<th class="num">Precio unit.</th>' +
         '<th class="num">Subtotal</th>' +
       '</tr></thead>' +
