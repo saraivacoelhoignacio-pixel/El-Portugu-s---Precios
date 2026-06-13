@@ -112,6 +112,16 @@ body{background:#f5f5f5}
 .ticket-total-row{background:#eef3ed;font-weight:700;font-size:15px}
 .ticket-total-row td{padding:10px 10px;color:#2c5f2e}
 .ticket-footer{border-top:1px solid #ccc;padding-top:10px;font-size:11px;color:#888;font-style:italic;margin-top:4px}
+
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:2000;align-items:center;justify-content:center}
+.modal-overlay.show{display:flex}
+.modal-box{background:#fff;border-radius:14px;padding:28px 32px;width:320px;max-width:90vw;box-shadow:0 8px 32px rgba(0,0,0,0.18);text-align:center}
+.modal-box h3{font-size:17px;font-weight:600;color:#111;margin-bottom:6px}
+.modal-box p{font-size:13px;color:#888;margin-bottom:18px}
+.modal-box input{width:100%;padding:11px 14px;font-size:20px;border:1.5px solid #ccc;border-radius:8px;text-align:center;letter-spacing:6px;margin-bottom:14px}
+.modal-box input:focus{outline:none;border-color:var(--brand)}
+.modal-actions{display:flex;gap:8px;justify-content:center}
+.modal-err{color:#e24b4a;font-size:12px;margin-top:-8px;margin-bottom:10px;min-height:16px}
 </style>
 </head>
 <body>
@@ -257,6 +267,20 @@ body{background:#f5f5f5}
 <div class="toast" id="toast"></div>
 </div>
 
+<!-- Auth modal -->
+<div class="modal-overlay" id="auth-modal">
+  <div class="modal-box">
+    <h3><i class="ti ti-lock" style="color:var(--brand)"></i> Zona restringida</h3>
+    <p>Ingresá la contraseña para continuar</p>
+    <input type="password" id="auth-input" placeholder="••••" onkeydown="if(event.key==='Enter')checkAuth()"/>
+    <div class="modal-err" id="auth-err"></div>
+    <div class="modal-actions">
+      <button class="btn-vaciar" onclick="cerrarAuth()">Cancelar</button>
+      <button class="btn-green" onclick="checkAuth()">Ingresar</button>
+    </div>
+  </div>
+</div>
+
 <script>
 // ============================================================
 // CONFIGURACIÓN — pegá tu URL de Apps Script acá abajo
@@ -276,6 +300,8 @@ var P = [];
 var carrito = [];
 var faltantes = {};
 var WA_FALTANTES = "5491122125551";
+var PASS_EDICION = "0000";
+var authOk = false;
 var cambiosPendientes = false;
 
 // ============================================================
@@ -380,6 +406,11 @@ function cargarDesdeSheets() {
     }
     if (data && data.ok && data.productos && data.productos.length) {
       P = data.productos;
+      if (data.faltantes) {
+        faltantes = {};
+        data.faltantes.forEach(function(f){ faltantes[f.cod] = f; });
+        actualizarFaltantesBadge();
+      }
       cambiosPendientes = false;
       setSyncStatus('✓ ' + P.length + ' productos cargados — ' + horaActual(), 'ok');
       buscar();
@@ -462,7 +493,17 @@ function fmtNum(n) {
 function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 
 // ---------- Tabs ----------
+var _pendingTab = null;
+
 function showTab(t) {
+  if ((t === 'editar' || t === 'actualizar') && !authOk) {
+    _pendingTab = t;
+    document.getElementById('auth-input').value = '';
+    document.getElementById('auth-err').textContent = '';
+    document.getElementById('auth-modal').classList.add('show');
+    setTimeout(function(){ document.getElementById('auth-input').focus(); }, 100);
+    return;
+  }
   ['buscar','carrito','editar','actualizar','faltantes'].forEach(function(id, i){
     document.querySelectorAll('.tab')[i].classList.toggle('active', id === t);
     document.getElementById('panel-' + id).classList.toggle('active', id === t);
@@ -471,6 +512,24 @@ function showTab(t) {
   if (t === 'carrito') renderCarrito();
   if (t === 'actualizar') refreshCatSelects();
   if (t === 'faltantes') renderFaltantes();
+}
+
+function checkAuth() {
+  var val = document.getElementById('auth-input').value;
+  if (val === PASS_EDICION) {
+    authOk = true;
+    document.getElementById('auth-modal').classList.remove('show');
+    if (_pendingTab) { var t = _pendingTab; _pendingTab = null; showTab(t); }
+  } else {
+    document.getElementById('auth-err').textContent = 'Contraseña incorrecta';
+    document.getElementById('auth-input').value = '';
+    document.getElementById('auth-input').focus();
+  }
+}
+
+function cerrarAuth() {
+  _pendingTab = null;
+  document.getElementById('auth-modal').classList.remove('show');
 }
 
 // ---------- Buscar ----------
@@ -720,6 +779,32 @@ function toggleFaltante(idx, checked) {
   if (checked) { faltantes[p.cod] = {cod:p.cod, nombre:p.nombre, u:p.u||'u'}; }
   else { delete faltantes[p.cod]; }
   actualizarFaltantesBadge();
+  guardarFaltantesEnSheets();
+}
+
+function guardarFaltantesEnSheets() {
+  if (!SCRIPT_URL || SCRIPT_URL === 'PEGAR_URL_AQUI') return;
+  var iframeName = 'faltantes_iframe_' + Date.now();
+  var iframe = document.createElement('iframe');
+  iframe.name = iframeName;
+  iframe.style.display = 'none';
+  document.body.appendChild(iframe);
+  var form = document.createElement('form');
+  form.method = 'POST';
+  form.action = SCRIPT_URL;
+  form.target = iframeName;
+  form.style.display = 'none';
+  var input = document.createElement('input');
+  input.type = 'hidden';
+  input.name = 'payload';
+  input.value = JSON.stringify({ accion: 'guardarFaltantes', faltantes: Object.values(faltantes) });
+  form.appendChild(input);
+  document.body.appendChild(form);
+  form.submit();
+  setTimeout(function(){ 
+    document.body.removeChild(form);
+    document.body.removeChild(iframe);
+  }, 3000);
 }
 
 function actualizarFaltantesBadge() {
@@ -763,6 +848,7 @@ function limpiarFaltantes() {
     actualizarFaltantesBadge();
     renderFaltantes();
     buscar();
+    guardarFaltantesEnSheets();
     toast('Lista de faltantes limpiada ✓');
   }
 }
@@ -771,7 +857,8 @@ function quitarFaltante(cod) {
   delete faltantes[cod];
   actualizarFaltantesBadge();
   renderFaltantes();
-  buscar(); // refresh checkboxes
+  buscar();
+  guardarFaltantesEnSheets();
 }
 
 // ---------- Toast ----------
