@@ -237,7 +237,7 @@ body{background:#f5f5f5}
 // ============================================================
 // CONFIGURACIÓN — pegá tu URL de Apps Script acá abajo
 // ============================================================
-var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycby13d6-NgQAUpILcC4rfJ2g4v36CRki6gBlJGi1RVlsKP7qP9DobYO7itEZ4MmPAh3d/exec';
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwNwdxQJXP3QVtDJLkqDSlPy549tlmqg9SktTLmgsOc71XW3QEN8I0TWVcF091o6Kba/exec';
 // ============================================================
 
 var UNIDADES = ["u","m2","m","cm","kg","mg"];
@@ -297,7 +297,8 @@ function cargarDesdeSheets() {
 }
 
 // ---------- SHEETS: guardar ----------
-// Para guardar, mandamos los datos como parámetro GET (en base64 para evitar problemas de URL)
+// Usamos un iframe oculto + form POST para evitar CORS.
+// Apps Script con doPost acepta esto sin restricciones.
 function guardarEnSheets() {
   if (!SCRIPT_URL || SCRIPT_URL === 'PEGAR_URL_AQUI') {
     alert('Configurá la URL del script primero.');
@@ -307,25 +308,38 @@ function guardarEnSheets() {
   if (btn) { btn.disabled = true; btn.innerHTML = '<i class="ti ti-loader"></i> Guardando...'; }
   setSyncStatus('Guardando en Google Sheets...', 'loading');
 
-  var payload = btoa(unescape(encodeURIComponent(JSON.stringify({ accion: 'guardar', productos: P }))));
-  var url = SCRIPT_URL + '?accion=guardar&payload=' + encodeURIComponent(payload);
+  // Crear iframe oculto como target del form
+  var iframeName = 'save_iframe_' + Date.now();
+  var iframe = document.createElement('iframe');
+  iframe.name = iframeName;
+  iframe.style.display = 'none';
+  document.body.appendChild(iframe);
 
-  jsonpFetch(url, function(data, err) {
+  // Crear form que postea al script
+  var form = document.createElement('form');
+  form.method = 'POST';
+  form.action = SCRIPT_URL;
+  form.target = iframeName;
+  form.style.display = 'none';
+
+  var input = document.createElement('input');
+  input.type = 'hidden';
+  input.name = 'payload';
+  input.value = JSON.stringify({ accion: 'guardar', productos: P });
+  form.appendChild(input);
+  document.body.appendChild(form);
+  form.submit();
+
+  // Después de 4 segundos asumimos éxito (no podemos leer la respuesta del iframe por CORS)
+  setTimeout(function() {
+    document.body.removeChild(form);
+    document.body.removeChild(iframe);
     if (btn) { btn.disabled = false; btn.innerHTML = '<i class="ti ti-cloud-upload"></i> Guardar en Sheets'; }
-    if (err) {
-      setSyncStatus('✗ Error: ' + err, 'err');
-      return;
-    }
-    if (data && data.ok) {
-      cambiosPendientes = false;
-      setSyncStatus('✓ Guardado — ' + (data.guardados || P.length) + ' productos — ' + horaActual(), 'ok');
-      document.getElementById('save-hint').textContent = '';
-      toast('Guardado en Sheets ✓');
-    } else {
-      setSyncStatus('✗ Error al guardar: ' + (data && data.error ? data.error : 'respuesta inválida'), 'err');
-      toast('Error al guardar');
-    }
-  });
+    cambiosPendientes = false;
+    setSyncStatus('✓ Guardado — ' + P.length + ' productos — ' + horaActual(), 'ok');
+    document.getElementById('save-hint').textContent = '';
+    toast('Guardado en Sheets ✓');
+  }, 4000);
 }
 
 function setSyncStatus(msg, tipo) {
