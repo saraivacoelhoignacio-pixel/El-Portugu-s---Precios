@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
 <title>El Portugués</title>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/dist/tabler-icons.min.css"/>
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;font-family:Arial,Helvetica,sans-serif}
 :root{--brand:#6C9268;--brand-dark:#4e6b4b;--brand-light:#eef3ed}
@@ -59,11 +60,14 @@ body{background:#f5f5f5}
 .total-valor{font-size:22px;font-weight:700;color:#111}
 .btn-vaciar{padding:7px 14px;background:#fff;border:1px solid #ddd;border-radius:6px;cursor:pointer;font-size:13px;color:#888}
 .btn-vaciar:hover{border-color:#e24b4a;color:#e24b4a}
+.btn-png{padding:7px 14px;background:#2c5f2e;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;display:flex;align-items:center;gap:5px}
+.btn-png:hover{background:#1e4020}
+.cart-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;justify-content:flex-end}
 .edit-add-row{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem;padding-bottom:1rem;border-bottom:1px solid #eee}
 .edit-add-row input,.edit-add-row select{padding:9px 11px;font-size:13px;border:1.5px solid #ccc;border-radius:8px;background:#fff;color:#111}
 .edit-add-row input[type=text]{flex:2;min-width:150px}
 .edit-add-row input[type=number]{width:100px}
-.edit-add-row select{width:100px}
+.edit-add-row select{min-width:120px}
 .btn-green{padding:9px 16px;background:var(--brand);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500}
 .btn-green:hover{background:var(--brand-dark)}
 .btn-save{padding:9px 20px;background:#2c5f2e;color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:600;display:flex;align-items:center;gap:6px}
@@ -91,6 +95,23 @@ body{background:#f5f5f5}
 .loading-overlay.show{display:flex}
 .spinner{width:22px;height:22px;border:3px solid #ccc;border-top-color:var(--brand);border-radius:50%;animation:spin 0.7s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
+/* Cat badge */
+.cat-badge{display:inline-block;font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600;text-transform:uppercase;letter-spacing:0.3px;margin-left:6px;vertical-align:middle}
+/* ---- PNG ticket (hidden, rendered off-screen) ---- */
+#ticket-canvas-wrapper{position:fixed;left:-9999px;top:0;width:680px;background:#fff;padding:0;z-index:-1}
+.ticket-body{font-family:Arial,Helvetica,sans-serif;background:#fff;color:#111;width:680px;padding:28px 32px 24px}
+.ticket-header{border-bottom:3px solid #6C9268;padding-bottom:14px;margin-bottom:18px}
+.ticket-logo{font-size:22px;font-weight:700;color:#4e6b4b;letter-spacing:-0.5px}
+.ticket-sub{font-size:12px;color:#555;margin-top:3px;line-height:1.5}
+.ticket-date{font-size:12px;color:#888;margin-top:6px}
+.ticket-table{width:100%;border-collapse:collapse;margin-bottom:18px;font-size:13px}
+.ticket-table th{text-align:left;padding:7px 10px;background:#eef3ed;color:#4e6b4b;font-size:11px;text-transform:uppercase;letter-spacing:0.4px;border-bottom:1.5px solid #b2ccaf}
+.ticket-table td{padding:8px 10px;border-bottom:1px solid #e8e8e8;vertical-align:middle}
+.ticket-table tr:last-child td{border-bottom:none}
+.ticket-table .num{text-align:right}
+.ticket-total-row{background:#eef3ed;font-weight:700;font-size:15px}
+.ticket-total-row td{padding:10px 10px;color:#2c5f2e}
+.ticket-footer{border-top:1px solid #ccc;padding-top:10px;font-size:11px;color:#888;font-style:italic;margin-top:4px}
 </style>
 </head>
 <body>
@@ -99,12 +120,17 @@ body{background:#f5f5f5}
   <div class="spinner"></div> Cargando productos...
 </div>
 
+<!-- Hidden ticket for PNG export -->
+<div id="ticket-canvas-wrapper">
+  <div class="ticket-body" id="ticket-body"></div>
+</div>
+
 <div class="app">
 <div class="header">
   <i class="ti ti-tool" style="font-size:26px"></i>
   <div class="header-text">
     <h1>El Portugués</h1>
-    <div class="sub">Ferretería y Corralón — uso interno</div>
+    <div class="sub">Corralón, ferretería y bazar — uso interno</div>
   </div>
 </div>
 
@@ -123,16 +149,18 @@ body{background:#f5f5f5}
   <div class="tab" onclick="showTab('actualizar')"><i class="ti ti-refresh"></i> Actualizar precios</div>
 </div>
 
+<!-- ===== BUSCAR ===== -->
 <div id="panel-buscar" class="panel active">
   <div class="card">
     <div class="card-title"><i class="ti ti-search"></i> Buscar producto</div>
     <div class="search-row">
-      <input type="text" id="search-input" placeholder="Código o nombre (ej: 10001 o tornillo madera 8x2)" oninput="buscar()" autocomplete="off"/>
+      <input type="text" id="search-input" placeholder="Código o nombre (ej: 10001 o cemento portland)" oninput="buscar()" autocomplete="off"/>
     </div>
     <div id="results-area" class="results-list"></div>
   </div>
 </div>
 
+<!-- ===== CARRITO ===== -->
 <div id="panel-carrito" class="panel">
   <div class="card">
     <div class="card-title"><i class="ti ti-shopping-cart"></i> Carrito de pedido</div>
@@ -140,6 +168,7 @@ body{background:#f5f5f5}
   </div>
 </div>
 
+<!-- ===== EDITAR ===== -->
 <div id="panel-editar" class="panel">
   <div class="card">
     <div class="card-title"><i class="ti ti-plus"></i> Agregar producto</div>
@@ -151,9 +180,14 @@ body{background:#f5f5f5}
         <option value="u">Unidad</option>
         <option value="m2">m²</option>
         <option value="m">Metro</option>
+        <option value="m3">m³</option>
+        <option value="m3_med">½ m³</option>
+        <option value="m3_cuar">¼ m³</option>
         <option value="cm">cm</option>
         <option value="kg">kg</option>
         <option value="mg">mg</option>
+        <option value="bolsa">Bolsa</option>
+        <option value="lts">Litros</option>
       </select>
       <button class="btn-green" onclick="agregar()"><i class="ti ti-plus"></i> Agregar</button>
     </div>
@@ -164,7 +198,7 @@ body{background:#f5f5f5}
           <th style="width:90px">Código</th>
           <th>Nombre</th>
           <th style="width:100px">Precio</th>
-          <th style="width:80px">Unidad</th>
+          <th style="width:130px">Unidad</th>
           <th style="width:50px"></th>
         </tr></thead>
         <tbody id="edit-tbody"></tbody>
@@ -179,22 +213,13 @@ body{background:#f5f5f5}
   </div>
 </div>
 
+<!-- ===== ACTUALIZAR PRECIOS ===== -->
 <div id="panel-actualizar" class="panel">
   <div class="card">
     <div class="card-title"><i class="ti ti-percentage"></i> Aumento porcentual</div>
     <div class="bulk-row">
       <label>Categoría:</label>
-      <select id="bulk-cat">
-        <option value="todos">Todos</option>
-        <option value="tornillo">Tornillos</option>
-        <option value="tirafondo">Tirafondos</option>
-        <option value="disco">Discos</option>
-        <option value="punta">Puntas</option>
-        <option value="sierra">Sierras</option>
-        <option value="piton">Pitones</option>
-        <option value="pila">Pilas / Baterías</option>
-        <option value="escobillon">Escobillones</option>
-      </select>
+      <select id="bulk-cat"></select>
       <label>%:</label>
       <input type="number" id="bulk-pct" value="10" min="0" step="0.5"/>
       <button class="btn-green" onclick="aplicarAumento()">Aplicar aumento</button>
@@ -205,17 +230,7 @@ body{background:#f5f5f5}
     <div class="card-title"><i class="ti ti-replace"></i> Precio fijo por categoría</div>
     <div class="bulk-row">
       <label>Categoría:</label>
-      <select id="fixed-cat">
-        <option value="todos">Todos</option>
-        <option value="tornillo">Tornillos</option>
-        <option value="tirafondo">Tirafondos</option>
-        <option value="disco">Discos</option>
-        <option value="punta">Puntas</option>
-        <option value="sierra">Sierras</option>
-        <option value="piton">Pitones</option>
-        <option value="pila">Pilas / Baterías</option>
-        <option value="escobillon">Escobillones</option>
-      </select>
+      <select id="fixed-cat"></select>
       <label>Precio:</label>
       <input type="number" id="fixed-precio" placeholder="importe" min="0"/>
       <button class="btn-green" onclick="aplicarFijo()">Aplicar precio</button>
@@ -240,17 +255,85 @@ body{background:#f5f5f5}
 var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwNwdxQJXP3QVtDJLkqDSlPy549tlmqg9SktTLmgsOc71XW3QEN8I0TWVcF091o6Kba/exec';
 // ============================================================
 
-var UNIDADES = ["u","m2","m","cm","kg","mg"];
-var UNIDAD_LABEL = {"u":"unidad","m2":"m²","m":"metro","cm":"cm","kg":"kg","mg":"mg"};
+// --- Unidades ---
+var UNIDADES = ["u","m2","m","m3","m3_med","m3_cuar","cm","kg","mg","bolsa","lts"];
+var UNIDAD_LABEL = {
+  "u":"unidad","m2":"m²","m":"metro","m3":"m³",
+  "m3_med":"½ m³","m3_cuar":"¼ m³",
+  "cm":"cm","kg":"kg","mg":"mg","bolsa":"bolsa","lts":"litros"
+};
+
 var P = [];
 var carrito = [];
 var cambiosPendientes = false;
 
-// ---------- JSONP helper ----------
-// Apps Script no manda CORS headers correctos para POST desde dominios externos.
-// Solución: usamos JSONP para GET y para POST mandamos los datos via GET también
-// (Apps Script redirige POST→GET cuando se publica como "Cualquier persona").
+// ============================================================
+// CATEGORÍAS — detección automática por palabra clave
+// Se construye dinámicamente desde los productos cargados.
+// ============================================================
+var CAT_KEYWORDS = [
+  { id:'cemento',    label:'Cemento',          words:['cemento'] },
+  { id:'arena',      label:'Arena',            words:['arena'] },
+  { id:'cascote',    label:'Cascote / Piedra', words:['cascote','piedra','granza','canto rodado','ripio'] },
+  { id:'ladrillos',  label:'Ladrillos',        words:['ladrillo','bloque','ladrill'] },
+  { id:'cal',        label:'Cal',              words:[' cal ',' cal,','de cal','cal ','cal$'] },
+  { id:'hierro',     label:'Hierro',           words:['hierro','varilla','malla','alambre'] },
+  { id:'madera',     label:'Madera',           words:['madera','tabla','tirante','listón','listón'] },
+  { id:'pintura',    label:'Pintura / Latex',  words:['pintura','latex','látex','sellador','esmalte','barniz','fondo fijador'] },
+  { id:'plomería',   label:'Plomería',         words:['caño','cañería','canilla','válvula','llave de paso','sifon','sifón','termofus'] },
+  { id:'electricidad',label:'Electricidad',   words:['cable','toma','tecla','llave luz','disyuntor','tablero','interruptor','cablecito'] },
+  { id:'tornillo',   label:'Tornillos',        words:['tornillo'] },
+  { id:'tirafondo',  label:'Tirafondos',       words:['tirafondo'] },
+  { id:'disco',      label:'Discos',           words:['disco'] },
+  { id:'punta',      label:'Puntas',           words:['punta'] },
+  { id:'sierra',     label:'Sierras',          words:['sierra'] },
+  { id:'piton',      label:'Pitones',          words:['piton','pitón'] },
+  { id:'pila',       label:'Pilas / Baterías', words:['pila','bateria','batería'] },
+  { id:'escobillon', label:'Escobillones',     words:['escobillon','escobillón'] },
+  { id:'herramienta',label:'Herramientas',     words:['martillo','destornillador','llave','alicate','pinza','serrucho','cepillo','taladro','nivel','escuadra'] },
+  { id:'adhesivo',   label:'Adhesivos / Pegamentos', words:['adhesivo','pegamento','silicona','sellador','masilla'] },
+  { id:'ceramica',   label:'Cerámicas / Porcelanato', words:['ceramica','cerámica','porcelanato','azulejo','mosaico'] },
+  { id:'membrana',   label:'Membranas / Impermeab.', words:['membrana','impermeab','geomembrana','butilon','butilón'] },
+];
 
+function cat(p) {
+  var n = p.nombre.toLowerCase();
+  for (var i = 0; i < CAT_KEYWORDS.length; i++) {
+    var ck = CAT_KEYWORDS[i];
+    for (var j = 0; j < ck.words.length; j++) {
+      if (n.includes(ck.words[j])) return ck.id;
+    }
+  }
+  return 'otro';
+}
+
+function catLabel(id) {
+  for (var i = 0; i < CAT_KEYWORDS.length; i++) {
+    if (CAT_KEYWORDS[i].id === id) return CAT_KEYWORDS[i].label;
+  }
+  return cap(id);
+}
+
+// Construye lista de categorías presentes en los datos
+function buildCatOptions(selId) {
+  var sel = document.getElementById(selId);
+  if (!sel) return;
+  var present = {};
+  P.forEach(function(p){ present[cat(p)] = true; });
+  var html = '<option value="todos">Todos</option>';
+  CAT_KEYWORDS.forEach(function(ck){
+    if (present[ck.id]) html += '<option value="' + ck.id + '">' + ck.label + '</option>';
+  });
+  if (present['otro']) html += '<option value="otro">Otros</option>';
+  sel.innerHTML = html;
+}
+
+function refreshCatSelects() {
+  buildCatOptions('bulk-cat');
+  buildCatOptions('fixed-cat');
+}
+
+// ---------- JSONP helper ----------
 function jsonpFetch(url, callback) {
   var cbName = '__cb_' + Date.now();
   var script = document.createElement('script');
@@ -290,6 +373,7 @@ function cargarDesdeSheets() {
       setSyncStatus('✓ ' + P.length + ' productos cargados — ' + horaActual(), 'ok');
       buscar();
       renderEditar();
+      refreshCatSelects();
     } else {
       setSyncStatus('⚠️ Hoja vacía o sin datos válidos. Revisá que la hoja se llame "Productos"', 'err');
     }
@@ -297,8 +381,6 @@ function cargarDesdeSheets() {
 }
 
 // ---------- SHEETS: guardar ----------
-// Usamos un iframe oculto + form POST para evitar CORS.
-// Apps Script con doPost acepta esto sin restricciones.
 function guardarEnSheets() {
   if (!SCRIPT_URL || SCRIPT_URL === 'PEGAR_URL_AQUI') {
     alert('Configurá la URL del script primero.');
@@ -308,14 +390,12 @@ function guardarEnSheets() {
   if (btn) { btn.disabled = true; btn.innerHTML = '<i class="ti ti-loader"></i> Guardando...'; }
   setSyncStatus('Guardando en Google Sheets...', 'loading');
 
-  // Crear iframe oculto como target del form
   var iframeName = 'save_iframe_' + Date.now();
   var iframe = document.createElement('iframe');
   iframe.name = iframeName;
   iframe.style.display = 'none';
   document.body.appendChild(iframe);
 
-  // Crear form que postea al script
   var form = document.createElement('form');
   form.method = 'POST';
   form.action = SCRIPT_URL;
@@ -330,7 +410,6 @@ function guardarEnSheets() {
   document.body.appendChild(form);
   form.submit();
 
-  // Después de 4 segundos asumimos éxito (no podemos leer la respuesta del iframe por CORS)
   setTimeout(function() {
     document.body.removeChild(form);
     document.body.removeChild(iframe);
@@ -351,6 +430,10 @@ function horaActual() {
   return new Date().toLocaleTimeString('es-AR', {hour:'2-digit', minute:'2-digit'});
 }
 
+function fechaHoy() {
+  return new Date().toLocaleDateString('es-AR', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+}
+
 function marcarCambios() {
   cambiosPendientes = true;
   document.getElementById('save-hint').textContent = '● Hay cambios sin guardar';
@@ -359,22 +442,13 @@ function marcarCambios() {
 // ---------- Formato ----------
 function fmt(n) {
   var r = Math.round(n * 100) / 100;
+  return '$\u00a0' + r.toLocaleString('es-AR', {minimumFractionDigits:2, maximumFractionDigits:2});
+}
+function fmtNum(n) {
+  var r = Math.round(n * 100) / 100;
   return r.toLocaleString('es-AR', {minimumFractionDigits:2, maximumFractionDigits:2});
 }
 function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
-
-function cat(p) {
-  var n = p.nombre.toLowerCase();
-  if (n.includes('sierra')) return 'sierra';
-  if (n.includes('disco')) return 'disco';
-  if (n.includes('tirafondo')) return 'tirafondo';
-  if (n.includes('piton') || n.includes('pitón')) return 'piton';
-  if (n.includes('pila') || n.includes('bateria') || n.includes('batería')) return 'pila';
-  if (n.includes('escobillon') || n.includes('escobillón')) return 'escobillon';
-  if (n.includes('punta')) return 'punta';
-  if (n.includes('tornillo')) return 'tornillo';
-  return 'otro';
-}
 
 // ---------- Tabs ----------
 function showTab(t) {
@@ -384,6 +458,7 @@ function showTab(t) {
   });
   if (t === 'editar') renderEditar();
   if (t === 'carrito') renderCarrito();
+  if (t === 'actualizar') refreshCatSelects();
 }
 
 // ---------- Buscar ----------
@@ -406,8 +481,8 @@ function buscar() {
           '<div class="result-nombre">' + cap(p.nombre) + '</div>' +
           '<div class="result-cod">Cód: ' + p.cod + '</div>' +
         '</div>' +
-        '<span class="result-unit">' + (UNIDAD_LABEL[p.u || 'u']) + '</span>' +
-        '<div class="result-precio">' + fmt(p.precio) + '</div>' +
+        '<span class="result-unit">' + (UNIDAD_LABEL[p.u || 'u'] || p.u || 'u') + '</span>' +
+        '<div class="result-precio">' + fmtNum(p.precio) + '</div>' +
         '<div class="qty-control">' +
           '<button class="qty-btn" onclick="adjQty(\'qi_' + idx + '\',-1)">−</button>' +
           '<input class="qty-input" type="number" id="qi_' + idx + '" value="1" min="1" step="1"/>' +
@@ -453,7 +528,7 @@ function renderCarrito() {
       return '<div class="carrito-row">' +
         '<div style="flex:1;min-width:0">' +
           '<div class="carrito-nombre">' + cap(c.nombre) + '</div>' +
-          '<div class="carrito-detail">' + fmt(c.precio) + ' / ' + UNIDAD_LABEL[c.u||'u'] + '</div>' +
+          '<div class="carrito-detail">' + fmtNum(c.precio) + ' / ' + (UNIDAD_LABEL[c.u||'u'] || c.u || 'u') + '</div>' +
         '</div>' +
         '<div class="carrito-qty">' +
           '<div style="display:flex;align-items:center;gap:4px">' +
@@ -461,18 +536,21 @@ function renderCarrito() {
             '<input class="qty-input" type="number" value="' + c.qty + '" min="1" step="1" onchange="setQtyCarrito(' + i + ',this.value)"/>' +
             '<button class="qty-btn" onclick="cambiarQtyCarrito(' + i + ',1)">+</button>' +
           '</div>' +
-          '<div style="font-size:11px;color:#999;margin-top:3px;text-align:center">' + UNIDAD_LABEL[c.u||'u'] + '</div>' +
+          '<div style="font-size:11px;color:#999;margin-top:3px;text-align:center">' + (UNIDAD_LABEL[c.u||'u'] || c.u || 'u') + '</div>' +
         '</div>' +
-        '<div class="carrito-subtotal">' + fmt(c.precio * c.qty) + '</div>' +
+        '<div class="carrito-subtotal">' + fmtNum(c.precio * c.qty) + '</div>' +
         '<button class="btn-del-cart" onclick="quitarCarrito(' + i + ')"><i class="ti ti-trash"></i></button>' +
       '</div>';
     }).join('') +
     '<div class="total-bar">' +
       '<div>' +
         '<div class="total-label">Total del pedido (ARS)</div>' +
-        '<div class="total-valor">' + fmt(total) + '</div>' +
+        '<div class="total-valor">' + fmtNum(total) + '</div>' +
       '</div>' +
+    '</div>' +
+    '<div class="cart-actions">' +
       '<button class="btn-vaciar" onclick="vaciarCarrito()"><i class="ti ti-trash"></i> Vaciar carrito</button>' +
+      '<button class="btn-png" onclick="descargarPNG()"><i class="ti ti-photo-down"></i> Descargar imagen</button>' +
     '</div>';
 }
 
@@ -487,6 +565,74 @@ function setQtyCarrito(i, v) {
 function quitarCarrito(i) { carrito.splice(i, 1); actualizarBadge(); renderCarrito(); }
 function vaciarCarrito() {
   if (confirm('¿Vaciar el carrito?')) { carrito = []; actualizarBadge(); renderCarrito(); }
+}
+
+// ---------- PNG Export ----------
+function descargarPNG() {
+  if (!carrito.length) { toast('El carrito está vacío'); return; }
+
+  var total = carrito.reduce(function(s,c){ return s + c.precio * c.qty; }, 0);
+  var fecha = cap(fechaHoy());
+
+  var rows = carrito.map(function(c){
+    return '<tr>' +
+      '<td>' + cap(c.nombre) + '</td>' +
+      '<td class="num">' + c.qty + ' ' + (UNIDAD_LABEL[c.u||'u'] || c.u) + '</td>' +
+      '<td class="num">' + fmtNum(c.precio) + '</td>' +
+      '<td class="num"><strong>' + fmtNum(c.precio * c.qty) + '</strong></td>' +
+    '</tr>';
+  }).join('');
+
+  var html =
+    '<div class="ticket-header">' +
+      '<div class="ticket-logo">El Portugués</div>' +
+      '<div class="ticket-sub">Corralón de materiales para la construcción, ferretería y bazar<br>' +
+        'J. Bustamante y Guevara 1095, Hurlingham &nbsp;·&nbsp; 11&nbsp;2212-5551</div>' +
+      '<div class="ticket-date">' + fecha + '</div>' +
+    '</div>' +
+    '<table class="ticket-table">' +
+      '<thead><tr>' +
+        '<th>Producto</th>' +
+        '<th class="num">Cantidad</th>' +
+        '<th class="num">Precio unit.</th>' +
+        '<th class="num">Subtotal</th>' +
+      '</tr></thead>' +
+      '<tbody>' + rows + '</tbody>' +
+      '<tfoot>' +
+        '<tr class="ticket-total-row">' +
+          '<td colspan="3"><strong>TOTAL</strong></td>' +
+          '<td class="num"><strong>' + fmtNum(total) + '</strong></td>' +
+        '</tr>' +
+      '</tfoot>' +
+    '</table>' +
+    '<div class="ticket-footer">* Los precios están sujetos a modificación sin previo aviso.</div>';
+
+  document.getElementById('ticket-body').innerHTML = html;
+
+  // Give the DOM time to render, then capture
+  setTimeout(function(){
+    var wrapper = document.getElementById('ticket-canvas-wrapper');
+    wrapper.style.left = '-9999px';
+    wrapper.style.top = '0';
+    wrapper.style.zIndex = '-1';
+
+    html2canvas(document.getElementById('ticket-body'), {
+      scale: 2,
+      backgroundColor: '#ffffff',
+      useCORS: true
+    }).then(function(canvas){
+      var link = document.createElement('a');
+      var d = new Date();
+      var stamp = d.getFullYear() + '' + String(d.getMonth()+1).padStart(2,'0') + '' + String(d.getDate()).padStart(2,'0');
+      link.download = 'pedido-el-portugues-' + stamp + '.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      toast('Imagen descargada ✓');
+    }).catch(function(e){
+      toast('Error al generar imagen');
+      console.error(e);
+    });
+  }, 200);
 }
 
 // ---------- Editar ----------
@@ -530,6 +676,7 @@ function agregar() {
   document.getElementById('new-precio').value = '';
   marcarCambios();
   renderEditar();
+  refreshCatSelects();
   toast('Producto agregado');
 }
 
@@ -550,7 +697,7 @@ function aplicarFijo() {
   if (isNaN(pr) || pr < 0) { alert('Precio inválido'); return; }
   var count = 0;
   P.forEach(function(p){ if (c === 'todos' || cat(p) === c) { p.precio = pr; count++; } });
-  document.getElementById('msg-fijo').innerHTML = '<div class="msg-ok"><i class="ti ti-check"></i> Precio ' + fmt(pr) + ' aplicado a ' + count + ' productos.</div>';
+  document.getElementById('msg-fijo').innerHTML = '<div class="msg-ok"><i class="ti ti-check"></i> Precio fijado a ' + count + ' productos.</div>';
   marcarCambios();
 }
 
