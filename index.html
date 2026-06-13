@@ -172,7 +172,7 @@ body{background:#f5f5f5}
 <!-- ===== FALTANTES ===== -->
 <div id="panel-faltantes" class="panel">
   <div class="card">
-    <div class="card-title" style="justify-content:space-between"><span><i class="ti ti-alert-triangle"></i> Productos faltantes</span><button class="btn-vaciar" onclick="limpiarFaltantes()" style="font-size:12px;padding:4px 10px"><i class="ti ti-checks"></i> Todo pedido</button></div>
+    <div class="card-title" style="justify-content:space-between"><span><i class="ti ti-alert-triangle"></i> Productos faltantes</span><button class="btn-vaciar" onclick="limpiarFaltantes()" style="font-size:12px;padding:4px 10px"><i class="ti ti-checks"></i> Todo pedido</button><button class="btn-png" onclick="enviarWA()" style="font-size:12px;padding:4px 10px;margin-left:6px"><i class="ti ti-brand-whatsapp"></i> Enviar</button></div>
     <div id="faltantes-body"><div class="carrito-empty"><i class="ti ti-check" style="font-size:28px;display:block;margin-bottom:8px"></i>No hay productos marcados como faltantes.</div></div>
   </div>
 </div>
@@ -275,6 +275,7 @@ var UNIDAD_LABEL = {
 var P = [];
 var carrito = [];
 var faltantes = {};
+var WA_FALTANTES = "5491122125551";
 var cambiosPendientes = false;
 
 // ============================================================
@@ -744,6 +745,15 @@ function renderFaltantes() {
       '<button class="btn-del-cart" onclick="quitarFaltante(\'' + item.cod + '\')"><i class="ti ti-x"></i></button>' +
     '</div>';
   }).join('');
+}
+
+function enviarWA() {
+  var list = Object.values(faltantes);
+  if (!list.length) { toast('No hay faltantes para enviar'); return; }
+  var texto = '*Faltantes — El Portugués*\n\n' +
+    list.map(function(item, i){ return (i+1) + '. ' + cap(item.nombre); }).join('\n');
+  var url = 'https://wa.me/' + WA_FALTANTES + '?text=' + encodeURIComponent(texto);
+  window.open(url, '_blank');
 }
 
 function limpiarFaltantes() {
