@@ -163,7 +163,18 @@ body{background:#f5f5f5}
 <!-- ===== BUSCAR ===== -->
 <div id="panel-buscar" class="panel active">
   <div class="card">
-    <div class="card-title"><i class="ti ti-search"></i> Buscar producto</div>
+    <div class="card-title" style="justify-content:space-between">
+      <span><i class="ti ti-search"></i> Buscar producto</span>
+      <div style="display:flex;align-items:center;gap:6px">
+        <span style="font-size:12px;color:#888">¿Aplicar descuento?</span>
+        <button id="btn-desc-5" onclick="setDescuento(5)" class="btn-descuento" style="padding:4px 10px;font-size:12px;border:1.5px solid #ccc;border-radius:6px;background:#fff;color:#555;cursor:pointer;font-weight:500">5%</button>
+        <button id="btn-desc-10" onclick="setDescuento(10)" class="btn-descuento" style="padding:4px 10px;font-size:12px;border:1.5px solid #ccc;border-radius:6px;background:#fff;color:#555;cursor:pointer;font-weight:500">10%</button>
+        <button id="btn-desc-0" onclick="setDescuento(0)" style="display:none;padding:4px 10px;font-size:12px;border:1.5px solid #e24b4a;border-radius:6px;background:#fff;color:#e24b4a;cursor:pointer;font-weight:500"><i class="ti ti-x"></i> Quitar</button>
+      </div>
+    </div>
+    <div id="descuento-banner" style="display:none;background:#fff8e1;border:1px solid #f0c040;border-radius:8px;padding:8px 14px;margin-bottom:10px;font-size:13px;color:#7a5c00;display:none;align-items:center;gap:8px">
+      <i class="ti ti-tag"></i> <span id="descuento-banner-text"></span>
+    </div>
     <div class="search-row">
       <input type="text" id="search-input" placeholder="Código o nombre (ej: 10001 o cemento)" oninput="buscar()" autocomplete="off"/>
     </div>
@@ -176,6 +187,39 @@ body{background:#f5f5f5}
   <div class="card">
     <div class="card-title"><i class="ti ti-shopping-cart"></i> Carrito de pedido</div>
     <div id="carrito-body"></div>
+    <div style="margin-top:12px;text-align:center">
+      <span id="toggle-noenlistado" onclick="toggleNoEnlistado()" style="font-size:12px;color:var(--brand);cursor:pointer;text-decoration:underline;user-select:none">+ Agregá productos no enlistados</span>
+    </div>
+    <div id="panel-noenlistado" style="display:none;margin-top:10px;padding:12px;background:#f9f9f9;border:1.5px dashed #ccc;border-radius:10px">
+      <div style="font-size:12px;font-weight:500;color:#888;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:10px"><i class="ti ti-pencil"></i> Producto personalizado</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
+        <div style="flex:2;min-width:140px">
+          <label style="font-size:11px;color:#888;display:block;margin-bottom:3px">Nombre del producto</label>
+          <input type="text" id="ne-nombre" placeholder="Ej: Pintura exterior" style="width:100%;padding:8px 10px;font-size:13px;border:1.5px solid #ccc;border-radius:8px;background:#fff;color:#111"/>
+        </div>
+        <div style="min-width:100px">
+          <label style="font-size:11px;color:#888;display:block;margin-bottom:3px">Precio unitario</label>
+          <input type="number" id="ne-precio" placeholder="0" min="0" style="width:100%;padding:8px 10px;font-size:13px;border:1.5px solid #ccc;border-radius:8px;background:#fff;color:#111"/>
+        </div>
+        <div style="min-width:110px">
+          <label style="font-size:11px;color:#888;display:block;margin-bottom:3px">Unidad</label>
+          <select id="ne-unidad" style="width:100%;padding:8px 10px;font-size:13px;border:1.5px solid #ccc;border-radius:8px;background:#fff;color:#111">
+            <option value="u">Unidad</option>
+            <option value="m2">m²</option>
+            <option value="m">Metro</option>
+            <option value="m3">m³</option>
+            <option value="m3_med">½ m³</option>
+            <option value="m3_cuar">¼ m³</option>
+            <option value="cm">cm</option>
+            <option value="kg">kg</option>
+            <option value="mg">mg</option>
+            <option value="bolsa">Bolsa</option>
+            <option value="lts">Litros</option>
+          </select>
+        </div>
+        <button onclick="addNoEnlistado()" style="padding:8px 16px;background:var(--brand);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;white-space:nowrap"><i class="ti ti-plus"></i> Agregar</button>
+      </div>
+    </div>
   </div>
 </div>
 
@@ -299,6 +343,7 @@ var UNIDAD_LABEL = {
 var P = [];
 var carrito = [];
 var faltantes = {};
+var descuentoPct = 0;
 var WA_FALTANTES = "5491122125551";
 var PASS_EDICION = "0000";
 var authOk = false;
