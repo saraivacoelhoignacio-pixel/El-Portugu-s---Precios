@@ -300,7 +300,7 @@ var P = [];
 var carrito = [];
 var faltantes = {};
 var WA_FALTANTES = "5491122125551";
-var PASS_EDICION = "0000";
+var PASS_EDICION = "000";
 var authOk = false;
 var cambiosPendientes = false;
 
@@ -483,12 +483,10 @@ function marcarCambios() {
 
 // ---------- Formato ----------
 function fmt(n) {
-  var r = Math.round(n * 100) / 100;
-  return '$\u00a0' + r.toLocaleString('es-AR', {minimumFractionDigits:2, maximumFractionDigits:2});
+  return '$ ' + Math.ceil(n).toLocaleString('es-AR');
 }
 function fmtNum(n) {
-  var r = Math.round(n * 100) / 100;
-  return r.toLocaleString('es-AR', {minimumFractionDigits:2, maximumFractionDigits:2});
+  return Math.ceil(n).toLocaleString('es-AR');
 }
 function cap(s) { return s.charAt(0).toUpperCase() + s.slice(1); }
 
