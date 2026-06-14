@@ -113,6 +113,28 @@ body{background:#f5f5f5}
 .ticket-total-row td{padding:10px 10px;color:#2c5f2e}
 .ticket-footer{border-top:1px solid #ccc;padding-top:10px;font-size:11px;color:#888;font-style:italic;margin-top:4px}
 
+/* Custom unlisted product form */
+.custom-prod-toggle{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--brand);cursor:pointer;padding:6px 0;text-decoration:none;border:none;background:none;margin-top:4px;opacity:0.8}
+.custom-prod-toggle:hover{opacity:1;text-decoration:underline}
+.custom-prod-form{display:none;margin-top:10px;padding:12px;background:#f9fbf9;border:1.5px dashed var(--brand);border-radius:8px}
+.custom-prod-form.open{display:block}
+.custom-prod-row{display:flex;gap:6px;flex-wrap:wrap;align-items:flex-end}
+.custom-prod-row input,.custom-prod-row select{padding:8px 10px;font-size:13px;border:1.5px solid #ccc;border-radius:8px;background:#fff;color:#111}
+.custom-prod-row input[type=text]{flex:2;min-width:130px}
+.custom-prod-row input[type=number]{width:110px}
+.custom-prod-row select{min-width:110px}
+/* Discount section */
+.discount-bar{margin-top:10px;padding:10px 14px;background:#fff;border:1.5px solid #ccc;border-radius:8px}
+.discount-toggle{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--brand);cursor:pointer;border:none;background:none;font-weight:500;padding:0}
+.discount-toggle:hover{text-decoration:underline}
+.discount-options{display:none;margin-top:8px;display:none;gap:8px;align-items:center;flex-wrap:wrap}
+.discount-options.open{display:flex}
+.disc-btn{padding:6px 14px;border:1.5px solid #ccc;border-radius:6px;background:#fff;cursor:pointer;font-size:13px;font-weight:500;color:#555;transition:all 0.15s}
+.disc-btn:hover,.disc-btn.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+.disc-btn.remove{border-color:#ddd;color:#888}
+.disc-btn.remove:hover{border-color:#e24b4a;color:#e24b4a;background:#fff}
+.total-original{font-size:13px;color:#999;text-decoration:line-through;text-align:right}
+.total-discount-label{font-size:12px;color:var(--brand-dark);font-weight:500;background:var(--brand-light);border-radius:4px;padding:2px 7px}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:2000;align-items:center;justify-content:center}
 .modal-overlay.show{display:flex}
 .modal-box{background:#fff;border-radius:14px;padding:28px 32px;width:320px;max-width:90vw;box-shadow:0 8px 32px rgba(0,0,0,0.18);text-align:center}
@@ -163,18 +185,7 @@ body{background:#f5f5f5}
 <!-- ===== BUSCAR ===== -->
 <div id="panel-buscar" class="panel active">
   <div class="card">
-    <div class="card-title" style="justify-content:space-between">
-      <span><i class="ti ti-search"></i> Buscar producto</span>
-      <div style="display:flex;align-items:center;gap:6px">
-        <span style="font-size:12px;color:#888">¿Aplicar descuento?</span>
-        <button id="btn-desc-5" onclick="setDescuento(5)" class="btn-descuento" style="padding:4px 10px;font-size:12px;border:1.5px solid #ccc;border-radius:6px;background:#fff;color:#555;cursor:pointer;font-weight:500">5%</button>
-        <button id="btn-desc-10" onclick="setDescuento(10)" class="btn-descuento" style="padding:4px 10px;font-size:12px;border:1.5px solid #ccc;border-radius:6px;background:#fff;color:#555;cursor:pointer;font-weight:500">10%</button>
-        <button id="btn-desc-0" onclick="setDescuento(0)" style="display:none;padding:4px 10px;font-size:12px;border:1.5px solid #e24b4a;border-radius:6px;background:#fff;color:#e24b4a;cursor:pointer;font-weight:500"><i class="ti ti-x"></i> Quitar</button>
-      </div>
-    </div>
-    <div id="descuento-banner" style="display:none;background:#fff8e1;border:1px solid #f0c040;border-radius:8px;padding:8px 14px;margin-bottom:10px;font-size:13px;color:#7a5c00;display:none;align-items:center;gap:8px">
-      <i class="ti ti-tag"></i> <span id="descuento-banner-text"></span>
-    </div>
+    <div class="card-title"><i class="ti ti-search"></i> Buscar producto</div>
     <div class="search-row">
       <input type="text" id="search-input" placeholder="Código o nombre (ej: 10001 o cemento)" oninput="buscar()" autocomplete="off"/>
     </div>
@@ -187,23 +198,16 @@ body{background:#f5f5f5}
   <div class="card">
     <div class="card-title"><i class="ti ti-shopping-cart"></i> Carrito de pedido</div>
     <div id="carrito-body"></div>
-    <div style="margin-top:12px;text-align:center">
-      <span id="toggle-noenlistado" onclick="toggleNoEnlistado()" style="font-size:12px;color:var(--brand);cursor:pointer;text-decoration:underline;user-select:none">+ Agregá productos no enlistados</span>
-    </div>
-    <div id="panel-noenlistado" style="display:none;margin-top:10px;padding:12px;background:#f9f9f9;border:1.5px dashed #ccc;border-radius:10px">
-      <div style="font-size:12px;font-weight:500;color:#888;text-transform:uppercase;letter-spacing:0.4px;margin-bottom:10px"><i class="ti ti-pencil"></i> Producto personalizado</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end">
-        <div style="flex:2;min-width:140px">
-          <label style="font-size:11px;color:#888;display:block;margin-bottom:3px">Nombre del producto</label>
-          <input type="text" id="ne-nombre" placeholder="Ej: Pintura exterior" style="width:100%;padding:8px 10px;font-size:13px;border:1.5px solid #ccc;border-radius:8px;background:#fff;color:#111"/>
-        </div>
-        <div style="min-width:100px">
-          <label style="font-size:11px;color:#888;display:block;margin-bottom:3px">Precio unitario</label>
-          <input type="number" id="ne-precio" placeholder="0" min="0" style="width:100%;padding:8px 10px;font-size:13px;border:1.5px solid #ccc;border-radius:8px;background:#fff;color:#111"/>
-        </div>
-        <div style="min-width:110px">
-          <label style="font-size:11px;color:#888;display:block;margin-bottom:3px">Unidad</label>
-          <select id="ne-unidad" style="width:100%;padding:8px 10px;font-size:13px;border:1.5px solid #ccc;border-radius:8px;background:#fff;color:#111">
+    <!-- Custom unlisted product -->
+    <div style="margin-top:8px">
+      <button class="custom-prod-toggle" onclick="toggleCustomForm()">
+        <i class="ti ti-plus" style="font-size:12px"></i> Agregá productos no enlistados
+      </button>
+      <div class="custom-prod-form" id="custom-prod-form">
+        <div class="custom-prod-row">
+          <input type="text" id="custom-nombre" placeholder="Nombre del producto"/>
+          <input type="number" id="custom-precio" placeholder="Precio unitario" min="0" step="0.01"/>
+          <select id="custom-unidad">
             <option value="u">Unidad</option>
             <option value="m2">m²</option>
             <option value="m">Metro</option>
@@ -216,8 +220,19 @@ body{background:#f5f5f5}
             <option value="bolsa">Bolsa</option>
             <option value="lts">Litros</option>
           </select>
+          <button class="btn-green" onclick="addCustomCart()"><i class="ti ti-plus"></i> Agregar</button>
         </div>
-        <button onclick="addNoEnlistado()" style="padding:8px 16px;background:var(--brand);color:#fff;border:none;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;white-space:nowrap"><i class="ti ti-plus"></i> Agregar</button>
+      </div>
+    </div>
+    <!-- Discount section -->
+    <div class="discount-bar" id="discount-bar" style="display:none">
+      <button class="discount-toggle" onclick="toggleDiscountOptions()">
+        <i class="ti ti-tag" style="font-size:14px"></i> ¿Aplicar descuento?
+      </button>
+      <div class="discount-options" id="discount-options">
+        <button class="disc-btn" id="disc-5" onclick="aplicarDescuento(5)">5%</button>
+        <button class="disc-btn" id="disc-10" onclick="aplicarDescuento(10)">10%</button>
+        <button class="disc-btn remove" id="disc-0" onclick="aplicarDescuento(0)" style="display:none"><i class="ti ti-x" style="font-size:12px"></i> Quitar</button>
       </div>
     </div>
   </div>
@@ -343,11 +358,11 @@ var UNIDAD_LABEL = {
 var P = [];
 var carrito = [];
 var faltantes = {};
-var descuentoPct = 0;
 var WA_FALTANTES = "5491122125551";
 var PASS_EDICION = "0000";
 var authOk = false;
 var cambiosPendientes = false;
+var descuentoPct = 0; // 0, 5 o 10
 
 // ============================================================
 // CATEGORÍAS — detección automática por palabra clave
