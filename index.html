@@ -358,7 +358,6 @@ var CAT_KEYWORDS = [
   { id:'ladrillos',  label:'Ladrillos',        words:['ladrillo','bloque','ladrill'] },
   { id:'cal',        label:'Cal',              words:[' cal ',' cal,','de cal','cal ','cal$'] },
   { id:'hierro',     label:'Hierro',           words:['hierro','varilla','malla','alambre'] },
-  { id:'madera',     label:'Madera',           words:['madera','tabla','tirante','listón','listón'] },
   { id:'pintura',    label:'Pintura / Latex',  words:['pintura','latex','látex','sellador','esmalte','barniz','fondo fijador'] },
   { id:'plomería',   label:'Plomería',         words:['caño','cañería','canilla','válvula','llave de paso','sifon','sifón','termofus'] },
   { id:'electricidad',label:'Electricidad',   words:['cable','toma','tecla','llave luz','disyuntor','tablero','interruptor','cablecito'] },
@@ -372,8 +371,7 @@ var CAT_KEYWORDS = [
   { id:'escobillon', label:'Escobillones',     words:['escobillon','escobillón'] },
   { id:'herramienta',label:'Herramientas',     words:['martillo','destornillador','llave','alicate','pinza','serrucho','cepillo','taladro','nivel','escuadra'] },
   { id:'adhesivo',   label:'Adhesivos / Pegamentos', words:['adhesivo','pegamento','silicona','sellador','masilla'] },
-  { id:'ceramica',   label:'Cerámicas / Porcelanato', words:['ceramica','cerámica','porcelanato','azulejo','mosaico'] },
-  { id:'membrana',   label:'Membranas / Impermeab.', words:['membrana','impermeab','geomembrana','butilon','butilón'] },
+  { id:'membrana',   label:'Membranas / Impermeab.', words:['membrana','impermeab','geomembrana'] },
 ];
 
 function cat(p) {
@@ -747,7 +745,7 @@ var resumenDescuento =
       '<thead><tr>' +
         '<th class="num" style="width:60px">Cant.</th>' +
         '<th>Producto</th>' +
-        '<th class="num">Precio unit.</th>' +
+        '<th class="num">Precio unit.*</th>' +
         '<th class="num">Subtotal</th>' +
       '</tr></thead>' +
       '<tbody>' + rows + resumenDescuento + '</tbody>' +
