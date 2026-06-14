@@ -871,13 +871,32 @@ function toggleFaltante(idx, checked) {
 function guardarFaltantesEnSheets() {
   if (!SCRIPT_URL || SCRIPT_URL === 'PEGAR_URL_AQUI') return;
   var lista = Object.values(faltantes);
-  var payload = btoa(unescape(encodeURIComponent(JSON.stringify({ accion: 'guardarFaltantes', faltantes: lista }))));
-  var url = SCRIPT_URL + '?accion=guardarFaltantes&payload=' + encodeURIComponent(payload);
-  jsonpFetch(url, function(data, err) {
-    if (err) { toast('Error al guardar faltantes ✗'); return; }
-    if (data && data.ok) toast('Faltantes guardados en Sheets ✓');
-    else toast('Error: ' + (data && data.error || 'desconocido'));
-  });
+
+  var iframeName = 'faltantes_iframe_' + Date.now();
+  var iframe = document.createElement('iframe');
+  iframe.name = iframeName;
+  iframe.style.display = 'none';
+  document.body.appendChild(iframe);
+
+  var form = document.createElement('form');
+  form.method = 'POST';
+  form.action = SCRIPT_URL;
+  form.target = iframeName;
+  form.style.display = 'none';
+
+  var input = document.createElement('input');
+  input.type = 'hidden';
+  input.name = 'payload';
+  input.value = JSON.stringify({ accion: 'guardarFaltantes', faltantes: lista });
+  form.appendChild(input);
+  document.body.appendChild(form);
+  form.submit();
+
+  setTimeout(function() {
+    document.body.removeChild(form);
+    document.body.removeChild(iframe);
+    toast('Faltantes guardados en Sheets ✓');
+  }, 3000);
 }
 function actualizarFaltantesBadge() {
   var b = document.getElementById('faltantes-badge');
