@@ -60,6 +60,27 @@ body{background:#f5f5f5}
 .total-valor{font-size:22px;font-weight:700;color:#111;text-align:center}
 .btn-vaciar{padding:7px 14px;background:#fff;border:1px solid #ddd;border-radius:6px;cursor:pointer;font-size:13px;color:#888}
 .btn-vaciar:hover{border-color:#e24b4a;color:#e24b4a}
+.discount-options{
+  display:flex;
+  gap:6px;
+  margin-top:6px;
+}
+
+.discount-btn{
+  padding:4px 10px;
+  font-size:13px;
+  border:1px solid #ddd;
+  border-radius:6px;
+  background:#fff;
+  color:#888;
+  cursor:pointer;
+}
+
+.discount-btn.active{
+  background:var(--brand);
+  border-color:var(--brand);
+  color:#fff;
+}
 .btn-png{padding:7px 14px;background:#2c5f2e;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:13px;font-weight:500;display:flex;align-items:center;gap:5px}
 .btn-png:hover{background:#1e4020}
 .cart-actions{display:flex;gap:8px;margin-top:10px;flex-wrap:wrap;justify-content:flex-end}
@@ -113,28 +134,6 @@ body{background:#f5f5f5}
 .ticket-total-row td{padding:10px 10px;color:#2c5f2e}
 .ticket-footer{border-top:1px solid #ccc;padding-top:10px;font-size:11px;color:#888;font-style:italic;margin-top:4px}
 
-/* Custom unlisted product form */
-.custom-prod-toggle{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:var(--brand);cursor:pointer;padding:6px 0;text-decoration:none;border:none;background:none;margin-top:4px;opacity:0.8}
-.custom-prod-toggle:hover{opacity:1;text-decoration:underline}
-.custom-prod-form{display:none;margin-top:10px;padding:12px;background:#f9fbf9;border:1.5px dashed var(--brand);border-radius:8px}
-.custom-prod-form.open{display:block}
-.custom-prod-row{display:flex;gap:6px;flex-wrap:wrap;align-items:flex-end}
-.custom-prod-row input,.custom-prod-row select{padding:8px 10px;font-size:13px;border:1.5px solid #ccc;border-radius:8px;background:#fff;color:#111}
-.custom-prod-row input[type=text]{flex:2;min-width:130px}
-.custom-prod-row input[type=number]{width:110px}
-.custom-prod-row select{min-width:110px}
-/* Discount section */
-.discount-bar{margin-top:10px;padding:10px 14px;background:#fff;border:1.5px solid #ccc;border-radius:8px}
-.discount-toggle{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:var(--brand);cursor:pointer;border:none;background:none;font-weight:500;padding:0}
-.discount-toggle:hover{text-decoration:underline}
-.discount-options{display:none;margin-top:8px;display:none;gap:8px;align-items:center;flex-wrap:wrap}
-.discount-options.open{display:flex}
-.disc-btn{padding:6px 14px;border:1.5px solid #ccc;border-radius:6px;background:#fff;cursor:pointer;font-size:13px;font-weight:500;color:#555;transition:all 0.15s}
-.disc-btn:hover,.disc-btn.active{background:var(--brand);color:#fff;border-color:var(--brand)}
-.disc-btn.remove{border-color:#ddd;color:#888}
-.disc-btn.remove:hover{border-color:#e24b4a;color:#e24b4a;background:#fff}
-.total-original{font-size:13px;color:#999;text-decoration:line-through;text-align:right}
-.total-discount-label{font-size:12px;color:var(--brand-dark);font-weight:500;background:var(--brand-light);border-radius:4px;padding:2px 7px}
 .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:2000;align-items:center;justify-content:center}
 .modal-overlay.show{display:flex}
 .modal-box{background:#fff;border-radius:14px;padding:28px 32px;width:320px;max-width:90vw;box-shadow:0 8px 32px rgba(0,0,0,0.18);text-align:center}
@@ -197,44 +196,28 @@ body{background:#f5f5f5}
 <div id="panel-carrito" class="panel">
   <div class="card">
     <div class="card-title"><i class="ti ti-shopping-cart"></i> Carrito de pedido</div>
+    <div style="margin-bottom:12px">
+      <a href="#" onclick="toggleManualForm();return false;" style="font-size:12px;color:#666;text-decoration:none">
+      + Agregá productos no enlistados
+      </a>
+    </div>
+    <div id="manual-form" style="display:none;margin-bottom:12px">
+      <div class="edit-add-row">
+        <input type="text" id="manual-nombre" placeholder="Producto"/>
+        <input type="number" id="manual-precio" placeholder="Precio unitario" min="0"/>
+        <select id="manual-unidad">
+          <option value="u">Unidad</option>
+          <option value="m">Metro</option>
+          <option value="m2">m²</option>
+          <option value="m3">m³</option>
+          <option value="kg">kg</option>
+          <option value="bolsa">Bolsa</option>
+          <option value="lts">Litros</option>
+        </select>
+        <button class="btn-green" onclick="agregarManual()">Agregar</button>
+      </div>
+    </div>
     <div id="carrito-body"></div>
-    <!-- Custom unlisted product -->
-    <div style="margin-top:8px">
-      <button class="custom-prod-toggle" onclick="toggleCustomForm()">
-        <i class="ti ti-plus" style="font-size:12px"></i> Agregá productos no enlistados
-      </button>
-      <div class="custom-prod-form" id="custom-prod-form">
-        <div class="custom-prod-row">
-          <input type="text" id="custom-nombre" placeholder="Nombre del producto"/>
-          <input type="number" id="custom-precio" placeholder="Precio unitario" min="0" step="0.01"/>
-          <select id="custom-unidad">
-            <option value="u">Unidad</option>
-            <option value="m2">m²</option>
-            <option value="m">Metro</option>
-            <option value="m3">m³</option>
-            <option value="m3_med">½ m³</option>
-            <option value="m3_cuar">¼ m³</option>
-            <option value="cm">cm</option>
-            <option value="kg">kg</option>
-            <option value="mg">mg</option>
-            <option value="bolsa">Bolsa</option>
-            <option value="lts">Litros</option>
-          </select>
-          <button class="btn-green" onclick="addCustomCart()"><i class="ti ti-plus"></i> Agregar</button>
-        </div>
-      </div>
-    </div>
-    <!-- Discount section -->
-    <div class="discount-bar" id="discount-bar" style="display:none">
-      <button class="discount-toggle" onclick="toggleDiscountOptions()">
-        <i class="ti ti-tag" style="font-size:14px"></i> ¿Aplicar descuento?
-      </button>
-      <div class="discount-options" id="discount-options">
-        <button class="disc-btn" id="disc-5" onclick="aplicarDescuento(5)">5%</button>
-        <button class="disc-btn" id="disc-10" onclick="aplicarDescuento(10)">10%</button>
-        <button class="disc-btn remove" id="disc-0" onclick="aplicarDescuento(0)" style="display:none"><i class="ti ti-x" style="font-size:12px"></i> Quitar</button>
-      </div>
-    </div>
   </div>
 </div>
 
@@ -357,12 +340,12 @@ var UNIDAD_LABEL = {
 
 var P = [];
 var carrito = [];
+var descuentoCarrito = 0;
 var faltantes = {};
 var WA_FALTANTES = "5491122125551";
 var PASS_EDICION = "0000";
 var authOk = false;
 var cambiosPendientes = false;
-var descuentoPct = 0; // 0, 5 o 10
 
 // ============================================================
 // CATEGORÍAS — detección automática por palabra clave
@@ -646,41 +629,69 @@ function actualizarBadge() {
   else { b.style.display = 'none'; }
 }
 
+
+function toggleManualForm(){
+ var f=document.getElementById('manual-form');
+ f.style.display=(f.style.display==='none'||!f.style.display)?'block':'none';
+}
+
+function agregarManual(){
+ var nombre=document.getElementById('manual-nombre').value.trim();
+ var precio=parseFloat(document.getElementById('manual-precio').value);
+ if(!nombre||!precio){alert('Completá producto y precio');return;}
+ carrito.push({
+   cod:'MANUAL_'+Date.now(),
+   nombre:nombre,
+   precio:precio,
+   u:document.getElementById('manual-unidad').value,
+   qty:1,
+   manual:true
+ });
+ document.getElementById('manual-nombre').value='';
+ document.getElementById('manual-precio').value='';
+ actualizarBadge();
+ renderCarrito();
+}
+
+function toggleDescuento(){
+ var d=document.getElementById('descuento-box');
+ if(d)d.style.display=(d.style.display==='none'||!d.style.display)?'block':'none';
+}
+
+function aplicarDescuento(p){
+ descuentoCarrito=p;
+ renderCarrito();
+}
+
+
 function renderCarrito() {
-  var body = document.getElementById('carrito-body');
-  if (!carrito.length) {
-    body.innerHTML = '<div class="carrito-empty"><i class="ti ti-shopping-cart" style="font-size:28px;display:block;margin-bottom:8px"></i>El carrito está vacío.<br>Buscá productos y usá el botón Agregar.</div>';
+  var body=document.getElementById('carrito-body');
+  if(!carrito.length){
+    body.innerHTML='<div class="carrito-empty"><i class="ti ti-shopping-cart" style="font-size:28px;display:block;margin-bottom:8px"></i>El carrito está vacío.<br>Buscá productos y usá el botón Agregar.</div>';
     return;
   }
-  var total = carrito.reduce(function(s,c){ return s + c.precio * c.qty; }, 0);
-  body.innerHTML =
-    carrito.map(function(c, i){
-      return '<div class="carrito-row">' +
-        '<div style="flex:1;min-width:0">' +
-          '<div class="carrito-nombre">' + cap(c.nombre) + '</div>' +
-          '<div class="carrito-detail">' + fmtNum(c.precio) + ' / ' + (UNIDAD_LABEL[c.u||'u'] || c.u || 'u') + '</div>' +
-        '</div>' +
-        '<div class="carrito-qty">' +
-          '<div style="display:flex;align-items:center;gap:4px">' +
-            '<button class="qty-btn" onclick="cambiarQtyCarrito(' + i + ',-1)">−</button>' +
-            '<input class="qty-input" type="number" value="' + c.qty + '" min="1" step="1" onchange="setQtyCarrito(' + i + ',this.value)"/>' +
-            '<button class="qty-btn" onclick="cambiarQtyCarrito(' + i + ',1)">+</button>' +
-          '</div>' +
-          '<div style="font-size:11px;color:#999;margin-top:3px;text-align:center">' + (UNIDAD_LABEL[c.u||'u'] || c.u || 'u') + '</div>' +
-        '</div>' +
-        '<div class="carrito-subtotal">' + fmtNum(c.precio * c.qty) + '</div>' +
-        '<button class="btn-del-cart" onclick="quitarCarrito(' + i + ')"><i class="ti ti-trash"></i></button>' +
-      '</div>';
-    }).join('') +
-    '<div class="total-bar">' +
-      '<div class="total-label">Total del pedido (ARS)</div>' +
-      '<div style="flex:1"></div>' +
-      '<div class="total-valor">' + fmtNum(total) + '</div>' +
-    '</div>' +
-    '<div class="cart-actions">' +
-      '<button class="btn-vaciar" onclick="vaciarCarrito()"><i class="ti ti-trash"></i> Vaciar carrito</button>' +
-      '<button class="btn-png" onclick="descargarPNG()"><i class="ti ti-photo-down"></i> Descargar imagen</button>' +
-    '</div>';
+
+  var subtotal=carrito.reduce(function(s,c){return s+c.precio*c.qty;},0);
+  var descuento=subtotal*(descuentoCarrito/100);
+  var total=subtotal-descuento;
+
+  body.innerHTML=carrito.map(function(c,i){
+    return '<div class="carrito-row"><div style="flex:1;min-width:0"><div class="carrito-nombre">'+cap(c.nombre)+'</div><div class="carrito-detail">'+fmtNum(c.precio)+' / '+(UNIDAD_LABEL[c.u||'u']||c.u||'u')+'</div></div><div class="carrito-qty"><div style="display:flex;align-items:center;gap:4px"><button class="qty-btn" onclick="cambiarQtyCarrito('+i+',-1)">−</button><input class="qty-input" type="number" value="'+c.qty+'" onchange="setQtyCarrito('+i+',this.value)"/><button class="qty-btn" onclick="cambiarQtyCarrito('+i+',1)">+</button></div></div><div class="carrito-subtotal">'+fmtNum(c.precio*c.qty)+'</div><button class="btn-del-cart" onclick="quitarCarrito('+i+')"><i class="ti ti-trash"></i></button></div>';
+  }).join('')
++'<div style="margin-top:10px">'
++'<button class="btn-vaciar" style="font-size:13px;padding:4px 10px" onclick="toggleDescuento()">¿Aplicar descuento?</button>'
+
++'<div id="descuento-box" style="display:none" class="discount-options">'
+
++'<button class="discount-btn '+(descuentoCarrito==5?'active':'')+'" onclick="aplicarDescuento(5)">5%</button>'
+
++'<button class="discount-btn '+(descuentoCarrito==10?'active':'')+'" onclick="aplicarDescuento(10)">10%</button>'
+
++'<button class="discount-btn '+(descuentoCarrito==0?'active':'')+'" onclick="aplicarDescuento(0)">Quitar</button>'
+
++'</div></div>'
+  +'<div class="total-bar"><div><div class="total-label">Subtotal: '+fmtNum(subtotal)+'</div>'+(descuentoCarrito?'<div style="font-size:12px;color:#2c5f2e">Descuento '+descuentoCarrito+'%: -'+fmtNum(descuento)+'</div>':'')+'</div><div class="total-valor">'+fmtNum(total)+'</div></div>'
+  +'<div class="cart-actions"><button class="btn-vaciar" onclick="vaciarCarrito()"><i class="ti ti-trash"></i> Vaciar carrito</button><button class="btn-png" onclick="descargarPNG()"><i class="ti ti-photo-down"></i> Descargar imagen</button></div>';
 }
 
 function cambiarQtyCarrito(i, delta) {
@@ -693,14 +704,14 @@ function setQtyCarrito(i, v) {
 }
 function quitarCarrito(i) { carrito.splice(i, 1); actualizarBadge(); renderCarrito(); }
 function vaciarCarrito() {
-  if (confirm('¿Vaciar el carrito?')) { carrito = []; actualizarBadge(); renderCarrito(); }
+  if (confirm('¿Vaciar el carrito?')) { carrito = []; descuentoCarrito=0; actualizarBadge(); renderCarrito(); }
 }
 
 // ---------- PNG Export ----------
 function descargarPNG() {
   if (!carrito.length) { toast('El carrito está vacío'); return; }
 
-  var total = carrito.reduce(function(s,c){ return s + c.precio * c.qty; }, 0);
+  var subtotal = carrito.reduce(function(s,c){ return s + c.precio * c.qty; }, 0); var descuento=subtotal*(descuentoCarrito/100); var total=subtotal-descuento;
   var fecha = cap(fechaHoy());
 
   var rows = carrito.map(function(c){
@@ -711,6 +722,19 @@ function descargarPNG() {
       '<td class="num"><strong>' + fmtNum(c.precio * c.qty) + '</strong></td>' +
     '</tr>';
   }).join('');
+
+var resumenDescuento =
+  '<tr style="background:#eef3ed;">' +
+    '<td colspan="3" class="num"><strong>Subtotal</strong></td>' +
+    '<td class="num"><strong>'+fmtNum(subtotal)+'</strong></td>' +
+  '</tr>' +
+
+  (descuentoCarrito ?
+    '<tr>' +
+      '<td colspan="3" class="num">Descuento '+descuentoCarrito+'%</td>' +
+      '<td class="num"><strong>-'+fmtNum(descuento)+'</strong></td>' +
+    '</tr>'
+  : '');
 
   var html =
     '<div class="ticket-header">' +
@@ -726,7 +750,7 @@ function descargarPNG() {
         '<th class="num">Precio unit.</th>' +
         '<th class="num">Subtotal</th>' +
       '</tr></thead>' +
-      '<tbody>' + rows + '</tbody>' +
+      '<tbody>' + rows + resumenDescuento + '</tbody>' +
       '<tfoot>' +
         '<tr class="ticket-total-row">' +
           '<td colspan="3"><strong>TOTAL</strong></td>' +
