@@ -19,10 +19,15 @@ body{background:#f5f5f5}
 .sync-bar .sync-ok{color:var(--brand-dark);font-weight:500}
 .sync-bar .sync-err{color:#c0392b;font-weight:500}
 .sync-bar .sync-loading{color:#888}
-.tabs{display:flex;gap:6px;margin-bottom:1rem;flex-wrap:wrap}
+.tabs{display:flex;flex-direction:column;gap:8px;margin-bottom:1rem}
+.tabs-main{display:flex;gap:8px;justify-content:center}
+.tabs-sec{display:flex;gap:6px;flex-wrap:wrap;justify-content:center}
 .tab{padding:9px 18px;border:1.5px solid #ccc;border-radius:8px;cursor:pointer;font-size:14px;font-weight:500;background:#fff;color:#555;transition:all 0.15s}
 .tab.active{background:var(--brand);color:#fff;border-color:var(--brand)}
 .tab:hover:not(.active){border-color:var(--brand);color:var(--brand)}
+.tab-main{padding:13px 32px;font-size:16px;font-weight:700;border-width:2px;border-radius:10px;display:flex;align-items:center;gap:8px}
+.tab-main i{font-size:20px}
+.tab-sec{font-size:13px;font-weight:600}
 .panel{display:none}
 .panel.active{display:block}
 .card{background:#fff;border:1.5px solid #ccc;border-radius:12px;padding:1.25rem;margin-bottom:1rem}
@@ -203,13 +208,17 @@ body{background:#f5f5f5}
 </div>
 
 <div class="tabs">
-  <div class="tab active" onclick="showTab('buscar')"><i class="ti ti-search"></i> Consultar precio</div>
-  <div class="tab" onclick="showTab('carrito')"><i class="ti ti-shopping-cart"></i> Carrito <span id="cart-badge" style="background:#fff;color:var(--brand);border-radius:20px;padding:1px 7px;font-size:11px;font-weight:600;margin-left:4px;display:none"></span></div>
-  <div class="tab" onclick="showTab('editar')"><i class="ti ti-edit"></i> Editar productos</div>
-  <div class="tab" onclick="showTab('actualizar')"><i class="ti ti-refresh"></i> Actualizar precios</div>
-  <div class="tab" onclick="showTab('faltantes')"><i class="ti ti-alert-triangle"></i> Faltantes <span id="faltantes-badge" style="background:#e24b4a;color:#fff;border-radius:20px;padding:1px 7px;font-size:11px;font-weight:600;margin-left:4px;display:none"></span></div>
-  <div class="tab" onclick="showTab('clientes')"><i class="ti ti-users"></i> Clientes <span id="clientes-badge" style="background:#1a6fa8;color:#fff;border-radius:20px;padding:1px 7px;font-size:11px;font-weight:600;margin-left:4px;display:none"></span></div>
-  <div class="tab" onclick="showTab('prestados')"><i class="ti ti-hand-stop"></i> Prestados <span id="prestados-badge" style="background:#e67e22;color:#fff;border-radius:20px;padding:1px 7px;font-size:11px;font-weight:600;margin-left:4px;display:none"></span></div>
+  <div class="tabs-main">
+    <div class="tab tab-main active" onclick="showTab('buscar')"><i class="ti ti-search"></i> Consultar precio</div>
+    <div class="tab tab-main" onclick="showTab('carrito')"><i class="ti ti-shopping-cart"></i> Carrito <span id="cart-badge" style="background:#fff;color:var(--brand);border-radius:20px;padding:1px 7px;font-size:13px;font-weight:700;margin-left:6px;display:none"></span></div>
+  </div>
+  <div class="tabs-sec">
+    <div class="tab tab-sec" onclick="showTab('editar')"><i class="ti ti-edit"></i> Editar productos</div>
+    <div class="tab tab-sec" onclick="showTab('actualizar')"><i class="ti ti-refresh"></i> Actualizar precios</div>
+    <div class="tab tab-sec" onclick="showTab('faltantes')"><i class="ti ti-alert-triangle"></i> Faltantes <span id="faltantes-badge" style="background:#e24b4a;color:#fff;border-radius:20px;padding:1px 7px;font-size:11px;font-weight:600;margin-left:4px;display:none"></span></div>
+    <div class="tab tab-sec" onclick="showTab('clientes')"><i class="ti ti-users"></i> Clientes <span id="clientes-badge" style="background:#1a6fa8;color:#fff;border-radius:20px;padding:1px 7px;font-size:11px;font-weight:600;margin-left:4px;display:none"></span></div>
+    <div class="tab tab-sec" onclick="showTab('prestados')"><i class="ti ti-hand-stop"></i> Prestados <span id="prestados-badge" style="background:#e67e22;color:#fff;border-radius:20px;padding:1px 7px;font-size:11px;font-weight:600;margin-left:4px;display:none"></span></div>
+  </div>
 </div>
 
 <!-- ===== BUSCAR ===== -->
@@ -441,7 +450,7 @@ body{background:#f5f5f5}
 // ============================================================
 // CONFIGURACIÓN — pegá tu URL de Apps Script acá abajo
 // ============================================================
-var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzoHfuC1JZ5XXRxFS4T1y9nMp6NZMZf2SiX_ATtPVyJ3OOsIdSfiWvBP6g-bwbBxXZr/exec';
+var SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbxdOep4G5iui-dXk6oKw7WUNQmGoq1h4PFY6Hd682RvW0MJ8QLkYZHRm1leSi02TXtd/exec';
 // ============================================================
 
 // --- Unidades ---
@@ -672,9 +681,15 @@ function showTab(t) {
     setTimeout(function(){ document.getElementById('auth-input').focus(); }, 100);
     return;
   }
-  ['buscar','carrito','editar','actualizar','faltantes','clientes','prestados'].forEach(function(id, i){
-    document.querySelectorAll('.tab')[i].classList.toggle('active', id === t);
-    document.getElementById('panel-' + id).classList.toggle('active', id === t);
+  var tabs = ['buscar','carrito','editar','actualizar','faltantes','clientes','prestados'];
+  tabs.forEach(function(id){
+    var panel = document.getElementById('panel-' + id);
+    if (panel) panel.classList.toggle('active', id === t);
+  });
+  document.querySelectorAll('.tab').forEach(function(el){
+    var onclick = el.getAttribute('onclick') || '';
+    var match = onclick.match(/showTab\('(\w+)'\)/);
+    if (match) el.classList.toggle('active', match[1] === t);
   });
   if (t === 'editar') renderEditar();
   if (t === 'carrito') renderCarrito();
