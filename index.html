@@ -141,6 +141,22 @@ body{background:#f5f5f5}
 .prestado-cosa{font-size:15px;font-weight:600;color:#111;margin-bottom:3px}
 .prestado-meta{font-size:12px;color:#888;display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
 .prestado-meta span{display:flex;align-items:center;gap:3px}
+/* ---- Clientes ---- */
+.cliente-row{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border:1px solid #ddd;border-radius:8px;margin-bottom:8px;background:#fff}
+.cliente-row:hover{border-color:var(--brand);background:var(--brand-light)}
+.cliente-info{flex:1;min-width:0}
+.cliente-nombre{font-size:15px;font-weight:600;color:#111;margin-bottom:3px}
+.cliente-meta{font-size:12px;color:#888;display:flex;flex-wrap:wrap;gap:8px;margin-top:2px}
+.cliente-meta span{display:flex;align-items:center;gap:3px}
+.cliente-badge{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:600;padding:2px 8px;border-radius:10px;margin-left:5px;vertical-align:middle}
+.badge-obra{background:#e8f4fd;color:#1a6fa8;border:1px solid #b3d7f0}
+.badge-fiado{background:#fdecea;color:#c0392b;border:1px solid #f5b7b1}
+.cliente-filter{width:100%;padding:9px 12px;font-size:13px;border:1.5px solid #ccc;border-radius:8px;background:#fff;color:#111;margin-bottom:10px}
+.cliente-filter:focus{outline:none;border-color:var(--brand)}
+.toggle-group{display:flex;gap:6px}
+.toggle-btn{padding:8px 16px;font-size:13px;font-weight:500;border:1.5px solid #ccc;border-radius:8px;background:#fff;color:#666;cursor:pointer;display:flex;align-items:center;gap:5px;transition:all 0.15s}
+.toggle-btn.on-obra{background:#e8f4fd;border-color:#1a6fa8;color:#1a6fa8}
+.toggle-btn.on-fiado{background:#fdecea;border-color:#c0392b;color:#c0392b}
 .prestado-alerta{background:#fff3cd;border:1px solid #ffc107;color:#856404;border-radius:6px;padding:2px 8px;font-size:11px;font-weight:600;margin-left:6px}
 .prestado-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
 @media(max-width:600px){.prestado-form-grid{grid-template-columns:1fr}}
@@ -192,6 +208,7 @@ body{background:#f5f5f5}
   <div class="tab" onclick="showTab('editar')"><i class="ti ti-edit"></i> Editar productos</div>
   <div class="tab" onclick="showTab('actualizar')"><i class="ti ti-refresh"></i> Actualizar precios</div>
   <div class="tab" onclick="showTab('faltantes')"><i class="ti ti-alert-triangle"></i> Faltantes <span id="faltantes-badge" style="background:#e24b4a;color:#fff;border-radius:20px;padding:1px 7px;font-size:11px;font-weight:600;margin-left:4px;display:none"></span></div>
+  <div class="tab" onclick="showTab('clientes')"><i class="ti ti-users"></i> Clientes <span id="clientes-badge" style="background:#1a6fa8;color:#fff;border-radius:20px;padding:1px 7px;font-size:11px;font-weight:600;margin-left:4px;display:none"></span></div>
   <div class="tab" onclick="showTab('prestados')"><i class="ti ti-hand-stop"></i> Prestados <span id="prestados-badge" style="background:#e67e22;color:#fff;border-radius:20px;padding:1px 7px;font-size:11px;font-weight:600;margin-left:4px;display:none"></span></div>
 </div>
 
@@ -232,6 +249,49 @@ body{background:#f5f5f5}
       </div>
     </div>
     <div id="carrito-body"></div>
+  </div>
+</div>
+
+<!-- ===== CLIENTES ===== -->
+<div id="panel-clientes" class="panel">
+  <div class="card">
+    <div class="card-title"><i class="ti ti-user-plus"></i> Agregar cliente</div>
+    <div class="prestado-form-grid">
+      <div>
+        <label>Nombre</label>
+        <input type="text" id="cli-nombre" placeholder="Nombre del cliente"/>
+      </div>
+      <div>
+        <label>Teléfono</label>
+        <input type="tel" id="cli-tel" placeholder="Ej: 11 5555-1234"/>
+      </div>
+      <div style="grid-column:1/-1">
+        <label>Dirección</label>
+        <input type="text" id="cli-dir" placeholder="Calle, número, localidad"/>
+      </div>
+      <div style="grid-column:1/-1;display:flex;align-items:center;gap:12px;flex-wrap:wrap">
+        <label style="margin:0;text-transform:none;letter-spacing:0;font-size:13px;color:#555">Opciones:</label>
+        <div class="toggle-group">
+          <button class="toggle-btn" id="btn-obra" onclick="toggleCliBadge('obra')">
+            <i class="ti ti-building-community"></i> Obra
+          </button>
+          <button class="toggle-btn" id="btn-fiado" onclick="toggleCliBadge('fiado')">
+            <i class="ti ti-credit-card-off"></i> Fiado
+          </button>
+        </div>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:flex-end;margin-top:4px">
+      <button class="btn-green" onclick="agregarCliente()"><i class="ti ti-user-plus"></i> Agregar cliente</button>
+    </div>
+  </div>
+  <div class="card">
+    <div class="card-title" style="justify-content:space-between">
+      <span><i class="ti ti-users"></i> Lista de clientes</span>
+      <button class="btn-save" onclick="guardarClientesEnSheets()" style="font-size:12px;padding:4px 10px"><i class="ti ti-cloud-upload"></i> Guardar en Sheets</button>
+    </div>
+    <input class="cliente-filter" type="text" id="cli-filter" placeholder="Buscar cliente..." oninput="renderClientes()"/>
+    <div id="clientes-body"><div class="carrito-empty"><i class="ti ti-users" style="font-size:28px;display:block;margin-bottom:8px"></i>No hay clientes registrados.</div></div>
   </div>
 </div>
 
@@ -505,12 +565,21 @@ function cargarDesdeSheets() {
       P = data.productos;
       if (data.faltantes) {
         faltantes = {};
-        data.faltantes.forEach(function(f){ faltantes[f.cod] = f; });
+        data.faltantes.forEach(function(f){
+          if (f.fecha) f.fecha = fmtFechaCorta(f.fecha);
+          faltantes[f.cod] = f;
+        });
         actualizarFaltantesBadge();
       }
       if (data.prestados) {
         prestados = data.prestados;
         actualizarPrestadosBadge();
+      }
+      if (data.clientes) {
+        clientes = data.clientes.map(function(c){
+          return { id: c.id || Date.now(), nombre: c.nombre || '', tel: c.tel || '', dir: c.dir || '', obra: c.obra === true || c.obra === 'true' || c.obra === 'SI', fiado: c.fiado === true || c.fiado === 'true' || c.fiado === 'SI' };
+        });
+        actualizarClientesBadge();
       }
       cambiosPendientes = false;
       setSyncStatus('✓ ' + P.length + ' productos cargados — ' + horaActual(), 'ok');
@@ -603,7 +672,7 @@ function showTab(t) {
     setTimeout(function(){ document.getElementById('auth-input').focus(); }, 100);
     return;
   }
-  ['buscar','carrito','editar','actualizar','faltantes','prestados'].forEach(function(id, i){
+  ['buscar','carrito','editar','actualizar','faltantes','clientes','prestados'].forEach(function(id, i){
     document.querySelectorAll('.tab')[i].classList.toggle('active', id === t);
     document.getElementById('panel-' + id).classList.toggle('active', id === t);
   });
@@ -611,6 +680,7 @@ function showTab(t) {
   if (t === 'carrito') renderCarrito();
   if (t === 'actualizar') refreshCatSelects();
   if (t === 'faltantes') renderFaltantes();
+  if (t === 'clientes') renderClientes();
   if (t === 'prestados') renderPrestados();
 }
 
@@ -914,9 +984,24 @@ function aplicarFijo() {
 }
 
 // ---------- Faltantes ----------
+function fmtFechaCorta(d) {
+  if (!d) return '';
+  var dt = (d instanceof Date) ? d : new Date(d);
+  if (isNaN(dt.getTime())) return typeof d === 'string' ? d : '';
+  return String(dt.getDate()).padStart(2,'0') + '/' +
+         String(dt.getMonth()+1).padStart(2,'0') + '/' +
+         dt.getFullYear();
+}
+
 function toggleFaltante(idx, checked) {
   var p = P[idx];
-  if (checked) { faltantes[p.cod] = {cod:p.cod, nombre:p.nombre, u:p.u||'u'}; }
+  if (checked) {
+    var hoy = new Date();
+    var fechaStr = String(hoy.getDate()).padStart(2,'0') + '/' +
+                   String(hoy.getMonth()+1).padStart(2,'0') + '/' +
+                   hoy.getFullYear();
+    faltantes[p.cod] = {cod:p.cod, nombre:p.nombre, u:p.u||'u', fecha:fechaStr};
+  }
   else { delete faltantes[p.cod]; }
   actualizarFaltantesBadge();
   guardarFaltantesEnSheets();
@@ -967,10 +1052,11 @@ function renderFaltantes() {
     return;
   }
   body.innerHTML = list.map(function(item){
+    var fechaDisplay = item.fecha ? fmtFechaCorta(item.fecha) : '';
     return '<div class="carrito-row">' +
       '<div style="flex:1;min-width:0">' +
         '<div class="carrito-nombre"><i class="ti ti-alert-triangle" style="color:#e24b4a;margin-right:6px"></i>' + cap(item.nombre) + '</div>' +
-        '<div class="carrito-detail">Cód: ' + item.cod + ' &nbsp;·&nbsp; ' + (UNIDAD_LABEL[item.u] || item.u) + '</div>' +
+        '<div class="carrito-detail">Cód: ' + item.cod + ' &nbsp;·&nbsp; ' + (UNIDAD_LABEL[item.u] || item.u) + (fechaDisplay ? ' &nbsp;·&nbsp; ' + fechaDisplay : '') + '</div>' +
       '</div>' +
       '<button class="btn-del-cart" onclick="quitarFaltante(\'' + item.cod + '\')"><i class="ti ti-x"></i></button>' +
     '</div>';
@@ -1012,6 +1098,116 @@ function toast(msg) {
   t.textContent = msg;
   t.classList.add('show');
   setTimeout(function(){ t.classList.remove('show'); }, 2500);
+}
+
+// ---------- Clientes ----------
+var clientes = [];
+var _cliBadge = { obra: false, fiado: false };
+
+function toggleCliBadge(tipo) {
+  _cliBadge[tipo] = !_cliBadge[tipo];
+  var btn = document.getElementById('btn-' + tipo);
+  btn.classList.toggle('on-' + tipo, _cliBadge[tipo]);
+}
+
+function agregarCliente() {
+  var nombre = document.getElementById('cli-nombre').value.trim();
+  var tel    = document.getElementById('cli-tel').value.trim();
+  var dir    = document.getElementById('cli-dir').value.trim();
+  if (!nombre) { alert('El nombre es obligatorio'); return; }
+  clientes.push({
+    id: Date.now(),
+    nombre: nombre,
+    tel: tel,
+    dir: dir,
+    obra: _cliBadge.obra,
+    fiado: _cliBadge.fiado
+  });
+  document.getElementById('cli-nombre').value = '';
+  document.getElementById('cli-tel').value = '';
+  document.getElementById('cli-dir').value = '';
+  _cliBadge.obra = false; _cliBadge.fiado = false;
+  document.getElementById('btn-obra').classList.remove('on-obra');
+  document.getElementById('btn-fiado').classList.remove('on-fiado');
+  actualizarClientesBadge();
+  renderClientes();
+  guardarClientesEnSheets();
+  toast('Cliente agregado ✓');
+}
+
+function renderClientes() {
+  var body = document.getElementById('clientes-body');
+  var f = (document.getElementById('cli-filter') || {value:''}).value.toLowerCase();
+  var list = clientes.filter(function(c){
+    return !f || c.nombre.toLowerCase().includes(f) || (c.tel && c.tel.includes(f)) || (c.dir && c.dir.toLowerCase().includes(f));
+  });
+  if (!list.length) {
+    body.innerHTML = '<div class="carrito-empty"><i class="ti ti-users" style="font-size:28px;display:block;margin-bottom:8px"></i>' + (f ? 'Sin resultados para "' + f + '".' : 'No hay clientes registrados.') + '</div>';
+    return;
+  }
+  body.innerHTML = list.map(function(c, i) {
+    var realIdx = clientes.indexOf(c);
+    var badges = '';
+    if (c.obra)  badges += '<span class="cliente-badge badge-obra"><i class="ti ti-building-community"></i> Obra</span>';
+    if (c.fiado) badges += '<span class="cliente-badge badge-fiado"><i class="ti ti-credit-card-off"></i> Fiado</span>';
+    return '<div class="cliente-row">' +
+      '<div class="cliente-info">' +
+        '<div class="cliente-nombre"><i class="ti ti-user" style="color:var(--brand);margin-right:6px"></i>' + cap(c.nombre) + badges + '</div>' +
+        '<div class="cliente-meta">' +
+          (c.tel ? '<span><i class="ti ti-phone"></i> ' + c.tel + '</span>' : '') +
+          (c.dir ? '<span><i class="ti ti-map-pin"></i> ' + c.dir + '</span>' : '') +
+        '</div>' +
+      '</div>' +
+      '<button class="btn-del-cart" onclick="quitarCliente(' + realIdx + ')"><i class="ti ti-x"></i></button>' +
+    '</div>';
+  }).join('');
+}
+
+function quitarCliente(i) {
+  var c = clientes[i];
+  if (confirm('¿Eliminar cliente "' + cap(c.nombre) + '"?')) {
+    clientes.splice(i, 1);
+    actualizarClientesBadge();
+    renderClientes();
+    guardarClientesEnSheets();
+    toast('Cliente eliminado');
+  }
+}
+
+function actualizarClientesBadge() {
+  var b = document.getElementById('clientes-badge');
+  if (clientes.length > 0) { b.textContent = clientes.length; b.style.display = 'inline'; }
+  else { b.style.display = 'none'; }
+}
+
+function guardarClientesEnSheets() {
+  if (!SCRIPT_URL || SCRIPT_URL === 'PEGAR_URL_AQUI') return;
+
+  var iframeName = 'clientes_iframe_' + Date.now();
+  var iframe = document.createElement('iframe');
+  iframe.name = iframeName;
+  iframe.style.display = 'none';
+  document.body.appendChild(iframe);
+
+  var form = document.createElement('form');
+  form.method = 'POST';
+  form.action = SCRIPT_URL;
+  form.target = iframeName;
+  form.style.display = 'none';
+
+  var input = document.createElement('input');
+  input.type = 'hidden';
+  input.name = 'payload';
+  input.value = JSON.stringify({ accion: 'guardarClientes', clientes: clientes });
+  form.appendChild(input);
+  document.body.appendChild(form);
+  form.submit();
+
+  setTimeout(function() {
+    document.body.removeChild(form);
+    document.body.removeChild(iframe);
+    toast('Clientes guardados en Sheets ✓');
+  }, 3000);
 }
 
 // ---------- Prestados ----------
