@@ -952,6 +952,140 @@ function quitarFaltante(cod) {
   guardarFaltantesEnSheets();
 }
 
+// ============================================================
+// PRESTADOS
+// ============================================================
+
+function setDefaultDates() {
+  var hoy = new Date().toISOString().split('T')[0];
+  var enUnaSemana = new Date(Date.now() + 7*24*60*60*1000).toISOString().split('T')[0];
+  var pc = document.getElementById('p-cuando');
+  var pp = document.getElementById('p-preguntar');
+  if (pc && !pc.value) pc.value = hoy;
+  if (pp && !pp.value) pp.value = enUnaSemana;
+}
+
+function agregarPrestado() {
+  var cosa    = document.getElementById('p-cosa').value.trim();
+  var quien   = document.getElementById('p-quien').value.trim();
+  var cuando  = document.getElementById('p-cuando').value;
+  var preguntar = document.getElementById('p-preguntar').value;
+  if (!cosa || !quien) { alert('Completá al menos qué se prestó y a quién.'); return; }
+  prestados.push({
+    id: Date.now(),
+    cosa: cosa,
+    quien: quien,
+    cuando: cuando || new Date().toISOString().split('T')[0],
+    preguntar: preguntar || ''
+  });
+  document.getElementById('p-cosa').value = '';
+  document.getElementById('p-quien').value = '';
+  document.getElementById('p-cuando').value = '';
+  document.getElementById('p-preguntar').value = '';
+  setDefaultDates();
+  actualizarPrestadosBadge();
+  renderPrestados();
+  guardarPrestadosEnSheets();
+  toast('Préstamo registrado ✓');
+}
+
+function marcarDevuelto(id) {
+  prestados = prestados.filter(function(p){ return p.id !== id; });
+  actualizarPrestadosBadge();
+  renderPrestados();
+  guardarPrestadosEnSheets();
+  toast('¡Devuelto! Préstamo eliminado ✓');
+}
+
+function actualizarPrestadosBadge() {
+  var b = document.getElementById('prestados-badge');
+  var hoy = new Date().toISOString().split('T')[0];
+  // Badge muestra solo los que ya hay que preguntar (fecha <= hoy)
+  var urgentes = prestados.filter(function(p){ return p.preguntar && p.preguntar <= hoy; }).length;
+  if (urgentes > 0) { b.textContent = urgentes; b.style.display = 'inline'; }
+  else if (prestados.length > 0) { b.textContent = prestados.length; b.style.display = 'inline'; b.style.background = '#888'; }
+  else { b.style.display = 'none'; }
+}
+
+function renderPrestados() {
+  var body = document.getElementById('prestados-body');
+  var stats = document.getElementById('prestados-stats');
+  var hoy = new Date().toISOString().split('T')[0];
+
+  if (!prestados.length) {
+    body.innerHTML = '<div class="prestados-empty"><i class="ti ti-hand-off" style="font-size:28px;display:block;margin-bottom:8px"></i>No hay préstamos registrados.</div>';
+    stats.innerHTML = '';
+    return;
+  }
+
+  var vencidos = prestados.filter(function(p){ return p.preguntar && p.preguntar < hoy; });
+  var hoyArr   = prestados.filter(function(p){ return p.preguntar && p.preguntar === hoy; });
+
+  stats.innerHTML =
+    '<span class="stat-pill total"><i class="ti ti-arrow-forward-up"></i> ' + prestados.length + ' en préstamo</span>' +
+    (vencidos.length ? '<span class="stat-pill vencidos"><i class="ti ti-alert-circle"></i> ' + vencidos.length + ' vencido' + (vencidos.length>1?'s':'') + '</span>' : '') +
+    (hoyArr.length   ? '<span class="stat-pill hoy"><i class="ti ti-clock"></i> ' + hoyArr.length + ' preguntar hoy</span>' : '');
+
+  // Ordenar: vencidos primero, luego hoy, luego por fecha de preguntar
+  var sorted = prestados.slice().sort(function(a, b){
+    var av = a.preguntar || '9999'; var bv = b.preguntar || '9999';
+    return av.localeCompare(bv);
+  });
+
+  body.innerHTML = sorted.map(function(p){
+    var esVencido   = p.preguntar && p.preguntar < hoy;
+    var esHoy       = p.preguntar && p.preguntar === hoy;
+    var cls = esVencido ? 'vencido' : (esHoy ? 'vence-hoy' : '');
+    var icon = esVencido ? 'ti-alert-circle' : (esHoy ? 'ti-clock' : 'ti-arrow-forward-up');
+
+    var tagPreguntar = '';
+    if (p.preguntar) {
+      var tagCls = esVencido ? 'tag-vencido' : (esHoy ? 'tag-vence-hoy' : 'tag-vence');
+      var label = esVencido ? 'Preguntar desde ' + fmtFecha(p.preguntar) : (esHoy ? 'Preguntar hoy' : 'Preguntar el ' + fmtFecha(p.preguntar));
+      tagPreguntar = '<span class="prestado-tag ' + tagCls + '"><i class="ti ti-calendar-event"></i> ' + label + '</span>';
+    }
+
+    return '<div class="prestado-card ' + cls + '">' +
+      '<div class="prestado-icon"><i class="ti ' + icon + '"></i></div>' +
+      '<div class="prestado-info">' +
+        '<div class="prestado-cosa">' + cap(p.cosa) + '</div>' +
+        '<div class="prestado-meta">' +
+          '<span class="prestado-tag tag-persona"><i class="ti ti-user"></i> ' + cap(p.quien) + '</span>' +
+          (p.cuando ? '<span class="prestado-tag"><i class="ti ti-calendar"></i> Prestado el ' + fmtFecha(p.cuando) + '</span>' : '') +
+          tagPreguntar +
+        '</div>' +
+      '</div>' +
+      '<div class="prestado-actions">' +
+        '<button class="btn-devuelto" onclick="marcarDevuelto(' + p.id + ')"><i class="ti ti-check"></i> Devuelto</button>' +
+        '<button class="btn-del-cart" onclick="if(confirm(\'¿Eliminar este préstamo?\'))marcarDevuelto(' + p.id + ')"><i class="ti ti-trash"></i></button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function fmtFecha(iso) {
+  if (!iso) return '';
+  var parts = iso.split('-');
+  return parts[2] + '/' + parts[1] + '/' + parts[0].slice(2);
+}
+
+function guardarPrestadosEnSheets() {
+  if (!SCRIPT_URL || SCRIPT_URL === 'PEGAR_URL_AQUI') return;
+  var iframeName = 'prestados_iframe_' + Date.now();
+  var iframe = document.createElement('iframe');
+  iframe.name = iframeName; iframe.style.display = 'none';
+  document.body.appendChild(iframe);
+  var form = document.createElement('form');
+  form.method = 'POST'; form.action = SCRIPT_URL; form.target = iframeName; form.style.display = 'none';
+  var input = document.createElement('input');
+  input.type = 'hidden'; input.name = 'payload';
+  input.value = JSON.stringify({ accion: 'guardarPrestados', prestados: prestados });
+  form.appendChild(input); document.body.appendChild(form); form.submit();
+  setTimeout(function() {
+    document.body.removeChild(form); document.body.removeChild(iframe);
+  }, 3000);
+}
+
 // ---------- Toast ----------
 function toast(msg) {
   var t = document.getElementById('toast');
