@@ -288,7 +288,7 @@ body{background:#f5f5f5}
   <div class="card">
     <div class="card-title"><i class="ti ti-search"></i> Buscar producto</div>
     <div class="search-row">
-      <input type="text" id="search-input" placeholder="Código o nombre (ej: 10001 o cemento)" oninput="buscar()" autocomplete="off"/>
+      <input type="text" id="search-input" placeholder="Código o nombre (ej: 10001 o cemento)" oninput="buscarDebounced()" autocomplete="off"/>
     </div>
     <div id="results-area" class="results-list"></div>
   </div>
@@ -896,10 +896,19 @@ function cerrarAuth() {
 }
 
 // ---------- Buscar ----------
+var _buscarTimer = null;
+function buscarDebounced() {
+  clearTimeout(_buscarTimer);
+  _buscarTimer = setTimeout(buscar, 200);
+}
 function buscar() {
   var q = document.getElementById('search-input').value.trim().toLowerCase();
   var area = document.getElementById('results-area');
   if (!q) { area.innerHTML = ''; return; }
+  if (q.length < 3) {
+    area.innerHTML = '<div class="no-result"><i class="ti ti-keyboard" style="font-size:28px;display:block;margin-bottom:8px"></i>Escribí al menos 3 letras</div>';
+    return;
+  }
   var found = P.filter(function(p){
     return p.cod.toLowerCase().includes(q) || p.nombre.toLowerCase().includes(q);
   });
