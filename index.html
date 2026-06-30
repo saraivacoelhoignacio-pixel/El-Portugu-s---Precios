@@ -1868,6 +1868,7 @@ function renderProximos() {
       '</div>' +
       '<div class="proximo-actions">' +
         (!p.cobrado ? '<button class="btn-pagar" onclick="marcarCobrado(\''+p.id+'\')"><i class="ti ti-check"></i> Cobrar</button>' : '') +
+        '<button class="btn-pagar" style="background:#1a6fa8" onclick="marcarEntregado(\''+p.id+'\')"><i class="ti ti-moped"></i> Entregado</button>' +
         (p.tel ? '<button class="btn-wa-ped" onclick="abrirWAPed(\''+p.tel+'\',\''+p.nombre+'\')" title="WhatsApp"><i class="ti ti-brand-whatsapp"></i></button>' : '') +
         '<button class="btn-del-ped" onclick="eliminarPedido(\''+p.id+'\')" title="Eliminar"><i class="ti ti-x"></i></button>' +
       '</div>' +
