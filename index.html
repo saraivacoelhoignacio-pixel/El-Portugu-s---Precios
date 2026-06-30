@@ -901,8 +901,11 @@ function buscarDebounced() {
   clearTimeout(_buscarTimer);
   _buscarTimer = setTimeout(buscar, 200);
 }
+function quitarTildes(s) {
+  return s.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+}
 function buscar() {
-  var q = document.getElementById('search-input').value.trim().toLowerCase();
+  var q = quitarTildes(document.getElementById('search-input').value.trim().toLowerCase());
   var area = document.getElementById('results-area');
   if (!q) { area.innerHTML = ''; return; }
   if (q.length < 2) {
@@ -910,7 +913,7 @@ function buscar() {
     return;
   }
   var found = P.filter(function(p){
-    return p.cod.toLowerCase().includes(q) || p.nombre.toLowerCase().includes(q);
+    return quitarTildes(p.cod.toLowerCase()).includes(q) || quitarTildes(p.nombre.toLowerCase()).includes(q);
   });
   if (!found.length) {
     area.innerHTML = '<div class="no-result"><i class="ti ti-search-off" style="font-size:28px;display:block;margin-bottom:8px"></i>Sin resultados</div>';
