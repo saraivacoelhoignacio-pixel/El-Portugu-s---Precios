@@ -905,8 +905,8 @@ function buscar() {
   var q = document.getElementById('search-input').value.trim().toLowerCase();
   var area = document.getElementById('results-area');
   if (!q) { area.innerHTML = ''; return; }
-  if (q.length < 3) {
-    area.innerHTML = '<div class="no-result"><i class="ti ti-keyboard" style="font-size:28px;display:block;margin-bottom:8px"></i>Escribí al menos 3 letras</div>';
+  if (q.length < 2) {
+    area.innerHTML = '<div class="no-result"><i class="ti ti-keyboard" style="font-size:28px;display:block;margin-bottom:8px"></i>Escribí al menos 2 letras</div>';
     return;
   }
   var found = P.filter(function(p){
