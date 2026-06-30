@@ -177,6 +177,64 @@ body{background:#f5f5f5}
 .modal-box input:focus{outline:none;border-color:var(--brand)}
 .modal-actions{display:flex;gap:8px;justify-content:center}
 .modal-err{color:#e24b4a;font-size:12px;margin-top:-8px;margin-bottom:10px;min-height:16px}
+
+/* ---- Pedidos / Historial ---- */
+.ped-section-title{font-size:11px;font-weight:600;color:#888;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;display:flex;align-items:center;gap:6px}
+.autocomplete-wrap{position:relative}
+.autocomplete-list{position:absolute;top:100%;left:0;right:0;background:#fff;border:1.5px solid var(--brand);border-top:none;border-radius:0 0 8px 8px;z-index:200;max-height:180px;overflow-y:auto;box-shadow:0 4px 12px rgba(0,0,0,0.1)}
+.autocomplete-item{padding:10px 14px;cursor:pointer;font-size:14px;color:#111;border-bottom:1px solid #f0f0f0}
+.autocomplete-item:hover{background:var(--brand-light)}
+.autocomplete-item .ac-sub{font-size:11px;color:#888;margin-top:2px}
+.ped-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px}
+@media(max-width:600px){.ped-form-grid{grid-template-columns:1fr}}
+.ped-form-grid label{font-size:12px;color:#888;font-weight:500;margin-bottom:3px;display:block;text-transform:uppercase;letter-spacing:0.4px}
+.ped-form-grid input,.ped-form-grid select,.ped-form-grid textarea{padding:10px 12px;font-size:14px;border:1.5px solid #ccc;border-radius:8px;background:#fff;color:#111;width:100%}
+.ped-form-grid input:focus,.ped-form-grid select:focus,.ped-form-grid textarea:focus{outline:none;border-color:var(--brand)}
+.entrega-opts{display:flex;gap:8px;flex-wrap:wrap}
+.entrega-opt{padding:8px 14px;border:1.5px solid #ccc;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;background:#fff;color:#555;transition:all 0.15s}
+.entrega-opt.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+.turno-opts{display:flex;gap:6px;margin-top:8px}
+.turno-opt{padding:6px 12px;border:1.5px solid #ccc;border-radius:8px;cursor:pointer;font-size:13px;background:#fff;color:#555}
+.turno-opt.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+.pago-opts{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.pago-opt{padding:7px 13px;border:1.5px solid #ccc;border-radius:8px;cursor:pointer;font-size:13px;font-weight:500;background:#fff;color:#555;transition:all 0.15s}
+.pago-opt.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+.pago-opt.pendiente{border-color:#e67e22;color:#e67e22}
+.pago-opt.pendiente.active{background:#e67e22;border-color:#e67e22;color:#fff}
+.btn-confirmar-pedido{width:100%;padding:14px;background:#2c5f2e;color:#fff;border:none;border-radius:10px;font-size:16px;font-weight:700;cursor:pointer;margin-top:10px;display:flex;align-items:center;justify-content:center;gap:8px}
+.btn-confirmar-pedido:hover{background:#1e4020}
+/* Próximos pedidos */
+.proximos-list{}
+.proximo-row{display:flex;align-items:flex-start;gap:10px;padding:12px 14px;border:1.5px solid #ddd;border-radius:10px;margin-bottom:8px;background:#fff;position:relative}
+.proximo-row.urgente{border-color:#e24b4a;background:#fff8f8}
+.proximo-row.avisa{border-color:#e67e22;background:#fff9f2}
+.proximo-row.entregado{opacity:0.55}
+.proximo-row.pagado .proximo-estado{color:#2c5f2e;font-weight:600}
+.proximo-info{flex:1;min-width:0}
+.proximo-cliente{font-size:15px;font-weight:600;color:#111}
+.proximo-dir{font-size:12px;color:#888;margin-top:1px}
+.proximo-entrega{font-size:13px;font-weight:600;color:var(--brand-dark);margin-top:4px}
+.proximo-entrega.urgente-text{color:#e24b4a}
+.proximo-entrega.avisa-text{color:#e67e22}
+.proximo-meta{font-size:12px;color:#888;margin-top:3px;display:flex;gap:8px;flex-wrap:wrap}
+.proximo-estado{font-size:12px;font-weight:600;color:#e67e22}
+.proximo-actions{display:flex;flex-direction:column;gap:5px;align-items:flex-end}
+.btn-pagar{padding:5px 10px;background:#2c5f2e;color:#fff;border:none;border-radius:6px;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap}
+.btn-pagar:hover{background:#1e4020}
+.btn-wa-ped{width:28px;height:28px;background:#25D366;color:#fff;border:none;border-radius:6px;cursor:pointer;font-size:15px;display:flex;align-items:center;justify-content:center}
+.btn-wa-ped:hover{background:#1aab52}
+.btn-del-ped{width:28px;height:28px;border:1px solid #ddd;border-radius:6px;background:#fff;color:#aaa;cursor:pointer;font-size:14px;display:flex;align-items:center;justify-content:center}
+.btn-del-ped:hover{border-color:#e24b4a;color:#e24b4a}
+.badge-avisa{display:inline-block;background:#e67e22;color:#fff;border-radius:6px;font-size:10px;font-weight:700;padding:2px 7px;margin-left:6px;vertical-align:middle}
+.badge-pendiente-cobro{display:inline-block;background:#e67e22;color:#fff;border-radius:6px;font-size:10px;font-weight:700;padding:2px 7px;vertical-align:middle}
+.hist-filtros{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:12px}
+.hist-filtro-btn{padding:6px 12px;border:1.5px solid #ccc;border-radius:8px;cursor:pointer;font-size:12px;font-weight:500;background:#fff;color:#666}
+.hist-filtro-btn.active{background:var(--brand);color:#fff;border-color:var(--brand)}
+.ticket-ped-header{border-bottom:3px solid #6C9268;padding-bottom:14px;margin-bottom:18px}
+.ticket-ped-cliente{font-size:14px;font-weight:600;color:#111;margin-bottom:4px}
+.ticket-ped-meta{font-size:12px;color:#666;line-height:1.7}
+.ticket-ped-entrega{font-size:15px;font-weight:700;color:#2c5f2e;margin:10px 0 4px}
+
 </style>
 </head>
 <body>
@@ -211,6 +269,7 @@ body{background:#f5f5f5}
   <div class="tabs-main">
     <div class="tab tab-main active" onclick="showTab('buscar')"><i class="ti ti-search"></i> Consultar precio</div>
     <div class="tab tab-main" onclick="showTab('carrito')"><i class="ti ti-shopping-cart"></i> Carrito <span id="cart-badge" style="background:#fff;color:var(--brand);border-radius:20px;padding:1px 7px;font-size:13px;font-weight:700;margin-left:6px;display:none"></span></div>
+    <div class="tab tab-main" onclick="showTab('pedidos')"><i class="ti ti-moped"></i> Pedidos <span id="pedidos-badge" style="background:#fff;color:var(--brand);border-radius:20px;padding:1px 7px;font-size:13px;font-weight:700;margin-left:6px;display:none"></span></div>
   </div>
   <div class="tabs-sec">
     <div class="tab tab-sec" onclick="showTab('editar')"><i class="ti ti-edit"></i> Editar productos</div>
@@ -218,6 +277,7 @@ body{background:#f5f5f5}
     <div class="tab tab-sec" onclick="showTab('faltantes')"><i class="ti ti-alert-triangle"></i> Faltantes <span id="faltantes-badge" style="background:#e24b4a;color:#fff;border-radius:20px;padding:1px 7px;font-size:11px;font-weight:600;margin-left:4px;display:none"></span></div>
     <div class="tab tab-sec" onclick="showTab('clientes')"><i class="ti ti-users"></i> Clientes <span id="clientes-badge" style="background:#1a6fa8;color:#fff;border-radius:20px;padding:1px 7px;font-size:11px;font-weight:600;margin-left:4px;display:none"></span></div>
     <div class="tab tab-sec" onclick="showTab('prestados')"><i class="ti ti-hand-stop"></i> Prestados <span id="prestados-badge" style="background:#e67e22;color:#fff;border-radius:20px;padding:1px 7px;font-size:11px;font-weight:600;margin-left:4px;display:none"></span></div>
+    <div class="tab tab-sec" onclick="showTab('historial')"><i class="ti ti-history"></i> Historial <span id="historial-badge" style="background:#8e44ad;color:#fff;border-radius:20px;padding:1px 7px;font-size:11px;font-weight:600;margin-left:4px;display:none"></span></div>
   </div>
 </div>
 
@@ -429,7 +489,113 @@ body{background:#f5f5f5}
   </div>
 </div>
 
+<!-- ===== PEDIDOS ===== -->
+<div id="panel-pedidos" class="panel">
+  <div id="ped-vacio-alert" style="display:none;background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:12px 14px;margin-bottom:14px;font-size:13px;color:#856404;display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap">
+    <span><i class="ti ti-alert-triangle"></i> El carrito está vacío. Agregá productos antes de armar un pedido.</span>
+    <button class="btn-green" style="font-size:12px;padding:5px 12px" onclick="showTab('carrito')"><i class="ti ti-shopping-cart"></i> Ir al carrito</button>
+  </div>
+  <!-- 1. Encabezado del pedido -->
+  <div class="card">
+    <div class="card-title"><i class="ti ti-moped"></i> Encabezado del pedido</div>
+    <div class="ped-form-grid">
+      <div style="grid-column:1/-1">
+        <label>Dirección / Cliente</label>
+        <div class="autocomplete-wrap">
+          <input type="text" id="ped-dir" placeholder="Escribí dirección o nombre para buscar cliente..." oninput="pedAutocomplete()" autocomplete="off"/>
+          <div id="ped-autocomplete-list" class="autocomplete-list" style="display:none"></div>
+        </div>
+      </div>
+      <div>
+        <label>Nombre del cliente</label>
+        <input type="text" id="ped-nombre" placeholder="Se completa automático o escribí"/>
+      </div>
+      <div>
+        <label>Teléfono</label>
+        <input type="tel" id="ped-tel" placeholder="Se completa automático o escribí"/>
+      </div>
+      <div>
+        <label>Fecha del pedido</label>
+        <input type="text" id="ped-fecha-hoy" readonly style="background:#f5f5f5;color:#888"/>
+      </div>
+      <div>
+        <label>Entrega</label>
+        <div class="entrega-opts">
+          <div class="entrega-opt active" id="ent-fecha-btn" onclick="setEntregaTipo('fecha')"><i class="ti ti-calendar"></i> Fecha y turno</div>
+          <div class="entrega-opt" id="ent-avisa-btn" onclick="setEntregaTipo('avisa')"><i class="ti ti-clock"></i> AVISA</div>
+        </div>
+        <div id="ent-fecha-box" style="margin-top:8px">
+          <input type="date" id="ped-fecha-entrega" style="padding:8px 12px;font-size:14px;border:1.5px solid #ccc;border-radius:8px;background:#fff;color:#111;width:100%"/>
+          <div class="turno-opts">
+            <div class="turno-opt active" id="turno-mañana" onclick="setTurno('mañana')">Mañana</div>
+            <div class="turno-opt" id="turno-tarde" onclick="setTurno('tarde')">Tarde</div>
+          </div>
+        </div>
+        <div id="ent-avisa-box" style="display:none;margin-top:8px">
+          <div style="background:#fff3cd;border:1px solid #ffc107;border-radius:8px;padding:8px 12px;font-size:13px;color:#856404"><i class="ti ti-clock"></i> El cliente va a avisar cuándo quiere recibir.</div>
+        </div>
+      </div>
+      <div style="grid-column:1/-1">
+        <label>Aclaraciones (opcional)</label>
+        <textarea id="ped-aclaraciones" placeholder="Ej: está desde las 10, tocar el portón azul..." rows="2" style="resize:vertical"></textarea>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Detalle del pedido (viene del carrito) -->
+  <div class="card">
+    <div class="card-title" style="justify-content:space-between">
+      <span><i class="ti ti-list"></i> Detalle del pedido</span>
+      <a href="#" onclick="showTab('carrito');return false;" style="font-size:12px;color:#666;text-decoration:none"><i class="ti ti-edit"></i> Editar productos en el carrito</a>
+    </div>
+    <div id="ped-resumen-body"></div>
+  </div>
+
+  <!-- 3. Método de pago -->
+  <div class="card">
+    <div class="card-title"><i class="ti ti-credit-card"></i> Método de pago</div>
+    <div class="pago-opts">
+      <div class="pago-opt pendiente" id="pago-domicilio" onclick="setPago('domicilio')"><i class="ti ti-home"></i> Paga en domicilio</div>
+      <div class="pago-opt pendiente" id="pago-fiado" onclick="setPago('fiado')"><i class="ti ti-credit-card-off"></i> Fiado</div>
+      <div class="pago-opt" id="pago-efectivo" onclick="setPago('efectivo')"><i class="ti ti-cash"></i> Efectivo</div>
+      <div class="pago-opt" id="pago-transferencia" onclick="setPago('transferencia')"><i class="ti ti-transfer"></i> Transferencia</div>
+      <div class="pago-opt" id="pago-credito" onclick="setPago('credito')"><i class="ti ti-credit-card"></i> Tarjeta crédito</div>
+      <div class="pago-opt" id="pago-debito" onclick="setPago('debito')"><i class="ti ti-credit-card"></i> Tarjeta débito</div>
+    </div>
+  </div>
+
+  <button class="btn-confirmar-pedido" onclick="confirmarPedido()">
+    <i class="ti ti-check"></i> Confirmar pedido y generar ticket
+  </button>
+
+  <!-- Próximos pedidos (debajo del formulario) -->
+  <div style="margin-top:1.5rem">
+    <div style="font-size:15px;font-weight:700;color:#333;margin-bottom:12px;display:flex;align-items:center;gap:8px"><i class="ti ti-calendar-time" style="color:var(--brand)"></i> Próximos pedidos</div>
+    <div id="proximos-body"></div>
+  </div>
+</div>
+
+<!-- ===== HISTORIAL ===== -->
+<div id="panel-historial" class="panel">
+  <div class="card">
+    <div class="card-title" style="justify-content:space-between">
+      <span><i class="ti ti-history"></i> Historial de pedidos</span>
+      <div style="display:flex;gap:6px">
+        <button class="btn-save" onclick="guardarPedidosEnSheets()" style="font-size:12px;padding:4px 10px"><i class="ti ti-cloud-upload"></i> Guardar en Sheets</button>
+      </div>
+    </div>
+    <div class="hist-filtros">
+      <div class="hist-filtro-btn active" onclick="setHistFiltro('todos',this)">Todos</div>
+      <div class="hist-filtro-btn" onclick="setHistFiltro('pendientes',this)">Pendientes de cobro</div>
+      <div class="hist-filtro-btn" onclick="setHistFiltro('pagados',this)">Pagados</div>
+      <div class="hist-filtro-btn" onclick="setHistFiltro('avisa',this)">Avisa</div>
+    </div>
+    <div id="historial-body"></div>
+  </div>
+</div>
+
 <div class="toast" id="toast"></div>
+
 </div>
 
 <!-- Auth modal -->
@@ -590,6 +756,10 @@ function cargarDesdeSheets() {
         });
         actualizarClientesBadge();
       }
+      if (data.pedidos) {
+        pedidos = data.pedidos;
+        actualizarPedidosBadge();
+      }
       cambiosPendientes = false;
       setSyncStatus('✓ ' + P.length + ' productos cargados — ' + horaActual(), 'ok');
       buscar();
@@ -681,7 +851,7 @@ function showTab(t) {
     setTimeout(function(){ document.getElementById('auth-input').focus(); }, 100);
     return;
   }
-  var tabs = ['buscar','carrito','editar','actualizar','faltantes','clientes','prestados'];
+  var tabs = ['buscar','carrito','editar','actualizar','faltantes','clientes','prestados','pedidos','historial'];
   tabs.forEach(function(id){
     var panel = document.getElementById('panel-' + id);
     if (panel) panel.classList.toggle('active', id === t);
@@ -697,6 +867,8 @@ function showTab(t) {
   if (t === 'faltantes') renderFaltantes();
   if (t === 'clientes') renderClientes();
   if (t === 'prestados') renderPrestados();
+  if (t === 'pedidos') { renderProximos(); renderPedResumen(); }
+  if (t === 'historial') renderHistorial();
 }
 
 function checkAuth() {
@@ -835,7 +1007,8 @@ function renderCarrito() {
 
 +'</div></div>'
   +'<div class="total-bar"><div><div class="total-label">Subtotal: '+fmtNum(subtotal)+'</div>'+(descuentoCarrito?'<div style="font-size:12px;color:#2c5f2e">Descuento '+descuentoCarrito+'%: -'+fmtNum(descuento)+'</div>':'')+'</div><div class="total-valor">'+fmtNum(total)+'</div></div>'
-  +'<div class="cart-actions"><button class="btn-vaciar" onclick="vaciarCarrito()"><i class="ti ti-trash"></i> Vaciar carrito</button><button class="btn-png" onclick="descargarPNG()"><i class="ti ti-photo-down"></i> Descargar imagen</button></div>';
+  +'<div class="cart-actions"><button class="btn-vaciar" onclick="vaciarCarrito()"><i class="ti ti-trash"></i> Vaciar carrito</button><button class="btn-png" onclick="descargarPNG()"><i class="ti ti-photo-down"></i> Descargar imagen</button></div>'
+  +'<button class="btn-confirmar-pedido" style="margin-top:10px" onclick="convertirEnPedido()"><i class="ti ti-moped"></i> Convertir carrito en pedido</button>';
 }
 
 function cambiarQtyCarrito(i, delta) {
@@ -1334,7 +1507,427 @@ function guardarPrestadosEnSheets() {
   }, 3000);
 }
 
-// ---------- Arrancar ----------
+// ============================================================
+// PEDIDOS
+// ============================================================
+var pedidos = [];
+var pedDescuento = 0;
+var pedEntregaTipo = 'fecha';
+var pedTurno = 'mañana';
+var pedPago = '';
+var _histFiltro = 'todos';
+
+// ---- Fecha hoy legible ----
+function pedFechaHoyStr() {
+  return new Date().toLocaleDateString('es-AR', {weekday:'long', year:'numeric', month:'long', day:'numeric'});
+}
+
+// ---- Autocomplete dirección/cliente ----
+function pedAutocomplete() {
+  var q = document.getElementById('ped-dir').value.trim().toLowerCase();
+  var list = document.getElementById('ped-autocomplete-list');
+  if (!q || clientes.length === 0) { list.style.display = 'none'; return; }
+  var found = clientes.filter(function(c){
+    return c.nombre.toLowerCase().includes(q) || (c.dir && c.dir.toLowerCase().includes(q));
+  }).slice(0, 6);
+  if (!found.length) { list.style.display = 'none'; return; }
+  list.innerHTML = found.map(function(c, i){
+    return '<div class="autocomplete-item" onclick="pedSelCliente(' + clientes.indexOf(c) + ')">' +
+      '<div>' + cap(c.nombre) + '</div>' +
+      '<div class="ac-sub">' + (c.dir || '—') + (c.tel ? ' · ' + c.tel : '') + '</div>' +
+    '</div>';
+  }).join('');
+  list.style.display = 'block';
+}
+
+function pedSelCliente(idx) {
+  var c = clientes[idx];
+  document.getElementById('ped-dir').value = c.dir || '';
+  document.getElementById('ped-nombre').value = cap(c.nombre);
+  document.getElementById('ped-tel').value = c.tel || '';
+  document.getElementById('ped-autocomplete-list').style.display = 'none';
+}
+
+document.addEventListener('click', function(e){
+  var list = document.getElementById('ped-autocomplete-list');
+  if (list && !list.contains(e.target) && e.target.id !== 'ped-dir') {
+    list.style.display = 'none';
+  }
+});
+
+// ---- Entrega tipo ----
+function setEntregaTipo(tipo) {
+  pedEntregaTipo = tipo;
+  document.getElementById('ent-fecha-btn').classList.toggle('active', tipo === 'fecha');
+  document.getElementById('ent-avisa-btn').classList.toggle('active', tipo === 'avisa');
+  document.getElementById('ent-fecha-box').style.display = tipo === 'fecha' ? 'block' : 'none';
+  document.getElementById('ent-avisa-box').style.display = tipo === 'avisa' ? 'block' : 'none';
+}
+
+function setTurno(t) {
+  pedTurno = t;
+  ['mañana','tarde'].forEach(function(x){
+    document.getElementById('turno-' + x).classList.toggle('active', x === t);
+  });
+}
+
+// ---- Método de pago ----
+function setPago(p) {
+  pedPago = p;
+  ['domicilio','fiado','efectivo','transferencia','credito','debito'].forEach(function(x){
+    document.getElementById('pago-' + x).classList.toggle('active', x === p);
+  });
+}
+
+// ---- Convertir carrito en pedido ----
+function convertirEnPedido() {
+  if (!carrito.length) { toast('El carrito está vacío'); return; }
+  pedDescuento = descuentoCarrito;
+  showTab('pedidos');
+}
+
+function renderPedResumen() {
+  var alerta = document.getElementById('ped-vacio-alert');
+  var body = document.getElementById('ped-resumen-body');
+  if (!body) return;
+
+  if (!carrito.length) {
+    if (alerta) alerta.style.display = 'flex';
+    body.innerHTML = '<div class="carrito-empty"><i class="ti ti-shopping-cart" style="font-size:28px;display:block;margin-bottom:8px"></i>No hay productos. Agregalos desde el carrito.</div>';
+    return;
+  }
+  if (alerta) alerta.style.display = 'none';
+
+  pedDescuento = descuentoCarrito;
+  var subtotal = carrito.reduce(function(s,c){ return s + c.precio*c.qty; }, 0);
+  var desc = subtotal * (pedDescuento/100);
+  var total = subtotal - desc;
+
+  body.innerHTML = carrito.map(function(c){
+    return '<div class="carrito-row"><div style="flex:1;min-width:0"><div class="carrito-nombre">' + cap(c.nombre) + '</div><div class="carrito-detail">' + fmtNum(c.precio) + ' / ' + (UNIDAD_LABEL[c.u||'u']||c.u||'u') + ' &nbsp;·&nbsp; cant: ' + c.qty + '</div></div>' +
+      '<div class="carrito-subtotal">' + fmtNum(c.precio*c.qty) + '</div></div>';
+  }).join('') +
+  '<div class="total-bar"><div><div class="total-label">Subtotal: '+fmtNum(subtotal)+'</div>'+(pedDescuento?'<div style="font-size:12px;color:#2c5f2e">Descuento '+pedDescuento+'%: -'+fmtNum(desc)+'</div>':'')+'</div><div class="total-valor">'+fmtNum(total)+'</div></div>';
+}
+
+// ---- Confirmar pedido ----
+function confirmarPedido() {
+  var dir = document.getElementById('ped-dir').value.trim();
+  var nombre = document.getElementById('ped-nombre').value.trim();
+  var tel = document.getElementById('ped-tel').value.trim();
+  if (!dir && !nombre) { alert('Completá al menos la dirección o el nombre del cliente'); return; }
+  if (!carrito.length) { alert('El pedido no tiene productos. Agregalos desde el carrito.'); return; }
+  if (!pedPago) { alert('Seleccioná el método de pago'); return; }
+
+  // Si cliente no existe, guardarlo
+  if (nombre) {
+    var yaExiste = clientes.find(function(c){ return c.nombre.toLowerCase() === nombre.toLowerCase(); });
+    if (!yaExiste) {
+      clientes.push({ id: Date.now(), nombre: nombre, tel: tel, dir: dir, obra: false, fiado: pedPago === 'fiado' });
+      actualizarClientesBadge();
+      guardarClientesEnSheets();
+    }
+  }
+
+  var subtotal = carrito.reduce(function(s,c){ return s + c.precio*c.qty; }, 0);
+  var desc = subtotal * (descuentoCarrito/100);
+  var total = subtotal - desc;
+
+  // Construir texto de entrega
+  var entregaText = '';
+  if (pedEntregaTipo === 'avisa') {
+    entregaText = 'AVISA';
+  } else {
+    var fechaEnt = document.getElementById('ped-fecha-entrega').value;
+    if (fechaEnt) {
+      var d = new Date(fechaEnt + 'T12:00:00');
+      var dias = ['DOMINGO','LUNES','MARTES','MIÉRCOLES','JUEVES','VIERNES','SÁBADO'];
+      var meses = ['ENE','FEB','MAR','ABR','MAY','JUN','JUL','AGO','SEP','OCT','NOV','DIC'];
+      entregaText = dias[d.getDay()] + ' ' + d.getDate() + '/' + meses[d.getMonth()] + ' POR LA ' + pedTurno.toUpperCase();
+    } else {
+      entregaText = 'Sin fecha';
+    }
+  }
+
+  var pagoLabels = { domicilio:'Paga en domicilio', fiado:'Fiado', efectivo:'Efectivo', transferencia:'Transferencia', credito:'Tarjeta crédito', debito:'Tarjeta débito' };
+  var esPendiente = pedPago === 'domicilio' || pedPago === 'fiado';
+
+  var ped = {
+    id: Date.now(),
+    fecha: new Date().toISOString().slice(0,10),
+    nombre: nombre || dir,
+    dir: dir,
+    tel: tel,
+    entrega: entregaText,
+    entregaTipo: pedEntregaTipo,
+    fechaEntrega: pedEntregaTipo === 'fecha' ? (document.getElementById('ped-fecha-entrega').value || '') : '',
+    turno: pedTurno,
+    aclaraciones: document.getElementById('ped-aclaraciones').value.trim(),
+    pago: pedPago,
+    pagoLabel: pagoLabels[pedPago] || pedPago,
+    esPendiente: esPendiente,
+    cobrado: !esPendiente,
+    items: carrito.slice(),
+    subtotal: subtotal,
+    descuento: descuentoCarrito,
+    total: total,
+    entregado: false
+  };
+
+  pedidos.unshift(ped);
+  actualizarPedidosBadge();
+  guardarPedidosEnSheets();
+  generarTicketPedido(ped);
+
+  // Resetear formulario
+  document.getElementById('ped-dir').value = '';
+  document.getElementById('ped-nombre').value = '';
+  document.getElementById('ped-tel').value = '';
+  document.getElementById('ped-aclaraciones').value = '';
+  document.getElementById('ped-fecha-entrega').value = '';
+  carrito = [];
+  descuentoCarrito = 0;
+  pedPago = '';
+  ['domicilio','fiado','efectivo','transferencia','credito','debito'].forEach(function(x){
+    document.getElementById('pago-' + x).classList.remove('active');
+  });
+  actualizarBadge();
+  renderPedResumen();
+  renderProximos();
+  toast('Pedido confirmado ✓');
+}
+
+// ---- Ticket PNG del pedido ----
+function generarTicketPedido(ped) {
+  var rows = ped.items.map(function(c){
+    return '<tr><td class="num">'+c.qty+'</td><td>'+cap(c.nombre)+'</td><td class="num">'+fmtNum(c.precio)+'</td><td class="num"><strong>'+fmtNum(c.precio*c.qty)+'</strong></td></tr>';
+  }).join('');
+  var descRow = ped.descuento ? '<tr><td colspan="3" class="num">Descuento '+ped.descuento+'%</td><td class="num">-'+fmtNum(ped.subtotal*(ped.descuento/100))+'</td></tr>' : '';
+
+  var html =
+    '<div class="ticket-header">' +
+      '<div class="ticket-logo" style="display:flex;align-items:center;gap:10px"><i class="ti ti-tool" style="font-size:22px;color:#4e6b4b"></i> El Portugués</div>' +
+      '<div class="ticket-sub">Corralón, ferretería y bazar &nbsp;·&nbsp; J Bustamante y Guevara 1095, Hurlingham<br>WhatsApp: 11 2212-5551 &nbsp;·&nbsp; Tel: 4662-0552</div>' +
+      '<div class="ticket-date">Pedido del ' + new Date().toLocaleDateString('es-AR',{weekday:'long',year:'numeric',month:'long',day:'numeric'}) + '</div>' +
+    '</div>' +
+    '<div class="ticket-ped-cliente"><i class="ti ti-user"></i> ' + cap(ped.nombre) + '</div>' +
+    '<div class="ticket-ped-meta">' +
+      (ped.dir ? '<i class="ti ti-map-pin"></i> ' + ped.dir + '<br>' : '') +
+      (ped.tel ? '<i class="ti ti-phone"></i> ' + ped.tel + '<br>' : '') +
+      (ped.aclaraciones ? '<i class="ti ti-info-circle"></i> ' + ped.aclaraciones + '<br>' : '') +
+    '</div>' +
+    '<div class="ticket-ped-entrega"><i class="ti ti-moped"></i> Entrega: ' + ped.entrega + '</div>' +
+    '<div class="ticket-ped-meta"><strong>Pago:</strong> ' + ped.pagoLabel + (ped.esPendiente ? ' — <span style="color:#e67e22">PENDIENTE DE COBRO</span>' : '') + '</div>' +
+    '<br>' +
+    '<table class="ticket-table"><thead><tr><th class="num" style="width:60px">Cant.</th><th>Producto</th><th class="num">Unit.</th><th class="num">Subtotal</th></tr></thead>' +
+    '<tbody>' + rows + '<tr style="background:#eef3ed"><td colspan="3" class="num"><strong>Subtotal</strong></td><td class="num"><strong>'+fmtNum(ped.subtotal)+'</strong></td></tr>' + descRow + '</tbody>' +
+    '<tfoot><tr class="ticket-total-row"><td colspan="3"><strong>TOTAL</strong></td><td class="num"><strong>' + fmtNum(ped.total) + '</strong></td></tr></tfoot></table>' +
+    '<div class="ticket-footer">* Los precios están sujetos a modificaciones sin previo aviso.</div>';
+
+  document.getElementById('ticket-body').innerHTML = html;
+
+  setTimeout(function(){
+    html2canvas(document.getElementById('ticket-body'), { scale: 2, backgroundColor: '#ffffff', useCORS: true }).then(function(canvas){
+      var link = document.createElement('a');
+      var d = new Date();
+      var stamp = d.getFullYear() + '' + String(d.getMonth()+1).padStart(2,'0') + '' + String(d.getDate()).padStart(2,'0');
+      var nombre = ped.nombre.replace(/[^a-zA-Z0-9áéíóúñÁÉÍÓÚÑ\s]/g,'').replace(/\s+/g,'-').toLowerCase().slice(0,20);
+      link.download = 'pedido-' + nombre + '-' + stamp + '.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    }).catch(function(e){ console.error(e); });
+  }, 200);
+}
+
+// ---- Próximos pedidos (panel rápido dentro de Pedidos) ----
+function renderProximos() {
+  var body = document.getElementById('proximos-body');
+  if (!body) return;
+  if (!pedidos.length) {
+    body.innerHTML = '<div class="carrito-empty"><i class="ti ti-calendar-off" style="font-size:28px;display:block;margin-bottom:8px"></i>No hay pedidos cargados aún.</div>';
+    return;
+  }
+  var hoy = new Date().toISOString().slice(0,10);
+
+  // Ordenar: fecha más próxima primero, AVISA al final
+  var sorted = pedidos.slice().sort(function(a, b){
+    if (a.entregaTipo === 'avisa' && b.entregaTipo !== 'avisa') return 1;
+    if (a.entregaTipo !== 'avisa' && b.entregaTipo === 'avisa') return -1;
+    if (a.fechaEntrega && b.fechaEntrega) return a.fechaEntrega.localeCompare(b.fechaEntrega);
+    return 0;
+  });
+
+  // Solo mostrar los no entregados (en proximos)
+  var activos = sorted.filter(function(p){ return !p.entregado; });
+
+  if (!activos.length) {
+    body.innerHTML = '<div class="carrito-empty"><i class="ti ti-check-circle" style="font-size:28px;display:block;margin-bottom:8px;color:var(--brand)"></i>Todos los pedidos están entregados.</div>';
+    return;
+  }
+
+  body.innerHTML = activos.map(function(p){
+    var esUrgente = p.fechaEntrega && p.fechaEntrega <= hoy && p.entregaTipo !== 'avisa';
+    var esAvisa = p.entregaTipo === 'avisa';
+    var clsRow = esUrgente ? 'proximo-row urgente' : esAvisa ? 'proximo-row avisa' : 'proximo-row';
+    var clsText = esUrgente ? 'proximo-entrega urgente-text' : esAvisa ? 'proximo-entrega avisa-text' : 'proximo-entrega';
+    return '<div class="' + clsRow + '">' +
+      '<div class="proximo-info">' +
+        '<div class="proximo-cliente"><i class="ti ti-user" style="color:var(--brand);margin-right:4px"></i>' + cap(p.nombre) + (esAvisa ? '<span class="badge-avisa">AVISA</span>' : '') + '</div>' +
+        (p.dir ? '<div class="proximo-dir"><i class="ti ti-map-pin" style="margin-right:3px"></i>' + p.dir + '</div>' : '') +
+        '<div class="' + clsText + '"><i class="ti ti-moped" style="margin-right:4px"></i>' + p.entrega + '</div>' +
+        '<div class="proximo-meta">' +
+          '<span><i class="ti ti-credit-card"></i> ' + p.pagoLabel + '</span>' +
+          '<span><i class="ti ti-cash"></i> ' + fmtNum(p.total) + '</span>' +
+          (!p.cobrado ? '<span class="badge-pendiente-cobro">Pendiente cobro</span>' : '<span style="color:#2c5f2e;font-weight:600"><i class="ti ti-check"></i> Cobrado</span>') +
+        '</div>' +
+        (p.aclaraciones ? '<div style="font-size:12px;color:#888;margin-top:3px;font-style:italic"><i class="ti ti-info-circle"></i> ' + p.aclaraciones + '</div>' : '') +
+      '</div>' +
+      '<div class="proximo-actions">' +
+        (!p.cobrado ? '<button class="btn-pagar" onclick="marcarCobrado(\''+p.id+'\')"><i class="ti ti-check"></i> Cobrar</button>' : '') +
+        (p.tel ? '<button class="btn-wa-ped" onclick="abrirWAPed(\''+p.tel+'\',\''+p.nombre+'\')" title="WhatsApp"><i class="ti ti-brand-whatsapp"></i></button>' : '') +
+        '<button class="btn-del-ped" onclick="eliminarPedido(\''+p.id+'\')" title="Eliminar"><i class="ti ti-x"></i></button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ---- Historial completo ----
+var _histFiltroActual = 'todos';
+
+function setHistFiltro(f, el) {
+  _histFiltroActual = f;
+  document.querySelectorAll('.hist-filtro-btn').forEach(function(b){ b.classList.remove('active'); });
+  if (el) el.classList.add('active');
+  renderHistorial();
+}
+
+function renderHistorial() {
+  var body = document.getElementById('historial-body');
+  if (!body) return;
+  if (!pedidos.length) {
+    body.innerHTML = '<div class="carrito-empty"><i class="ti ti-history" style="font-size:28px;display:block;margin-bottom:8px"></i>No hay pedidos en el historial.</div>';
+    return;
+  }
+  var hoy = new Date().toISOString().slice(0,10);
+  var list = pedidos.slice();
+
+  // Filtrar
+  if (_histFiltroActual === 'pendientes') list = list.filter(function(p){ return !p.cobrado; });
+  else if (_histFiltroActual === 'pagados') list = list.filter(function(p){ return p.cobrado; });
+  else if (_histFiltroActual === 'avisa') list = list.filter(function(p){ return p.entregaTipo === 'avisa'; });
+
+  // Ordenar: urgentes primero, avisa al final
+  list.sort(function(a, b){
+    if (a.entregaTipo === 'avisa' && b.entregaTipo !== 'avisa') return 1;
+    if (a.entregaTipo !== 'avisa' && b.entregaTipo === 'avisa') return -1;
+    if (a.fechaEntrega && b.fechaEntrega) return a.fechaEntrega.localeCompare(b.fechaEntrega);
+    return b.id - a.id;
+  });
+
+  if (!list.length) {
+    body.innerHTML = '<div class="carrito-empty">No hay pedidos con este filtro.</div>';
+    return;
+  }
+
+  body.innerHTML = list.map(function(p){
+    var esUrgente = p.fechaEntrega && p.fechaEntrega <= hoy && !p.entregado && p.entregaTipo !== 'avisa';
+    var esAvisa = p.entregaTipo === 'avisa';
+    var clsRow = p.entregado ? 'proximo-row entregado' : esUrgente ? 'proximo-row urgente' : esAvisa ? 'proximo-row avisa' : 'proximo-row';
+    var clsText = esUrgente ? 'proximo-entrega urgente-text' : esAvisa ? 'proximo-entrega avisa-text' : 'proximo-entrega';
+    return '<div class="' + clsRow + '">' +
+      '<div class="proximo-info">' +
+        '<div class="proximo-cliente" style="' + (p.entregado ? 'text-decoration:line-through;color:#aaa' : '') + '">' +
+          '<i class="ti ti-user" style="color:var(--brand);margin-right:4px"></i>' + cap(p.nombre) +
+          (esAvisa ? '<span class="badge-avisa">AVISA</span>' : '') +
+          (p.entregado ? ' <span style="color:#888;font-size:11px;font-weight:400">(entregado)</span>' : '') +
+        '</div>' +
+        (p.dir ? '<div class="proximo-dir"><i class="ti ti-map-pin" style="margin-right:3px"></i>' + p.dir + '</div>' : '') +
+        '<div class="' + clsText + '"><i class="ti ti-moped" style="margin-right:4px"></i>' + p.entrega + '</div>' +
+        '<div class="proximo-meta">' +
+          '<span><i class="ti ti-credit-card"></i> ' + p.pagoLabel + '</span>' +
+          '<span><i class="ti ti-cash"></i> ' + fmtNum(p.total) + '</span>' +
+          (!p.cobrado ? '<span class="badge-pendiente-cobro">Pendiente cobro</span>' : '<span style="color:#2c5f2e;font-weight:600"><i class="ti ti-check"></i> Cobrado</span>') +
+        '</div>' +
+        (p.aclaraciones ? '<div style="font-size:12px;color:#888;margin-top:3px;font-style:italic"><i class="ti ti-info-circle"></i> ' + p.aclaraciones + '</div>' : '') +
+        '<div style="font-size:11px;color:#bbb;margin-top:4px">Pedido: ' + (p.fecha || '—') + ' · Items: ' + (p.items ? p.items.length : 0) + '</div>' +
+      '</div>' +
+      '<div class="proximo-actions">' +
+        (!p.cobrado ? '<button class="btn-pagar" onclick="marcarCobrado(\''+p.id+'\')"><i class="ti ti-check"></i> Cobrar</button>' : '') +
+        (!p.entregado ? '<button class="btn-pagar" style="background:#1a6fa8" onclick="marcarEntregado(\''+p.id+'\')"><i class="ti ti-moped"></i> Entregado</button>' : '') +
+        (p.tel ? '<button class="btn-wa-ped" onclick="abrirWAPed(\''+p.tel+'\',\''+p.nombre+'\')" title="WhatsApp"><i class="ti ti-brand-whatsapp"></i></button>' : '') +
+        '<button class="btn-del-ped" onclick="eliminarPedido(\''+p.id+'\')" title="Eliminar"><i class="ti ti-x"></i></button>' +
+      '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function marcarCobrado(id) {
+  var p = pedidos.find(function(x){ return String(x.id) === String(id); });
+  if (p) { p.cobrado = true; guardarPedidosEnSheets(); renderProximos(); renderHistorial(); toast('Marcado como cobrado ✓'); actualizarPedidosBadge(); }
+}
+
+function marcarEntregado(id) {
+  var p = pedidos.find(function(x){ return String(x.id) === String(id); });
+  if (p) { p.entregado = true; guardarPedidosEnSheets(); renderProximos(); renderHistorial(); toast('Marcado como entregado ✓'); actualizarPedidosBadge(); }
+}
+
+function eliminarPedido(id) {
+  if (!confirm('¿Eliminar este pedido del historial?')) return;
+  pedidos = pedidos.filter(function(x){ return String(x.id) !== String(id); });
+  guardarPedidosEnSheets();
+  renderProximos();
+  renderHistorial();
+  actualizarPedidosBadge();
+  toast('Pedido eliminado');
+}
+
+function abrirWAPed(tel, nombre) {
+  var num = tel.replace(/\D/g,'');
+  if (!num.startsWith('54')) num = '54' + (num.startsWith('0') ? num.slice(1) : num);
+  window.open('https://wa.me/' + num, '_blank');
+}
+
+function actualizarPedidosBadge() {
+  var b = document.getElementById('pedidos-badge');
+  var hb = document.getElementById('historial-badge');
+  var pendientes = pedidos.filter(function(p){ return !p.cobrado && !p.entregado; }).length;
+  if (pendientes > 0) {
+    b.textContent = pendientes; b.style.display = 'inline';
+    hb.textContent = pendientes; hb.style.display = 'inline';
+  } else {
+    b.style.display = 'none'; hb.style.display = 'none';
+  }
+}
+
+// ---- Guardar pedidos en Sheets ----
+function guardarPedidosEnSheets() {
+  if (!SCRIPT_URL || SCRIPT_URL === 'PEGAR_URL_AQUI') return;
+  // Guardamos cabeceras en Pedidos y detalle en DetallePedidos
+  var iframeName = 'pedidos_iframe_' + Date.now();
+  var iframe = document.createElement('iframe');
+  iframe.name = iframeName; iframe.style.display = 'none';
+  document.body.appendChild(iframe);
+  var form = document.createElement('form');
+  form.method = 'POST'; form.action = SCRIPT_URL; form.target = iframeName; form.style.display = 'none';
+  var input = document.createElement('input');
+  input.type = 'hidden'; input.name = 'payload';
+  input.value = JSON.stringify({ accion: 'guardarPedidos', pedidos: pedidos });
+  form.appendChild(input);
+  document.body.appendChild(form);
+  form.submit();
+  setTimeout(function(){ document.body.removeChild(form); document.body.removeChild(iframe); }, 3000);
+}
+
+// ---- Init Pedidos tab ----
+function initPedidosTab() {
+  var fechaEl = document.getElementById('ped-fecha-hoy');
+  if (fechaEl) fechaEl.value = pedFechaHoyStr();
+  var entEl = document.getElementById('ped-fecha-entrega');
+  if (entEl && !entEl.value) entEl.value = new Date().toISOString().slice(0,10);
+  renderPedCarrito();
+}
+
+
 document.getElementById('prest-cuando').value = new Date().toISOString().slice(0,10);
 cargarDesdeSheets();
 </script>
