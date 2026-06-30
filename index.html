@@ -931,7 +931,7 @@ function buscar() {
         '<div class="result-precio">' + fmtNum(p.precio) + '</div>' +
         '<div class="qty-control">' +
           '<button class="qty-btn" onclick="adjQty(\'qi_' + idx + '\',-1)">−</button>' +
-          '<input class="qty-input" type="number" id="qi_' + idx + '" value="1" min="1" step="1"/>' +
+          '<input class="qty-input" type="number" id="qi_' + idx + '" value="1" min="1" step="1" onchange="qtyInputChanged(' + idx + ')"/>' +
           '<button class="qty-btn" onclick="adjQty(\'qi_' + idx + '\',1)">+</button>' +
         '</div>' +
         '<label style="display:flex;align-items:center;gap:4px;font-size:12px;color:#888;cursor:pointer;white-space:nowrap"><input type="checkbox" id="falta_' + idx + '" onchange="toggleFaltante(' + idx + ',this.checked)" ' + (faltantes[p.cod] ? 'checked' : '') + ' style="width:14px;height:14px;accent-color:#e24b4a"/> Falta</label>' +
@@ -942,7 +942,23 @@ function buscar() {
 
 function adjQty(id, delta) {
   var inp = document.getElementById(id);
-  inp.value = Math.max(1, (parseInt(inp.value) || 1) + delta);
+  var idx = parseInt(id.replace('qi_',''));
+  var val = Math.max(1, (parseInt(inp.value) || 1) + delta);
+  inp.value = val;
+  if (delta > 0 && val > 1) {
+    addCart(idx);
+    inp.value = 1;
+  }
+}
+
+function qtyInputChanged(idx) {
+  var inp = document.getElementById('qi_' + idx);
+  var val = Math.max(1, parseInt(inp.value) || 1);
+  inp.value = val;
+  if (val > 1) {
+    addCart(idx);
+    inp.value = 1;
+  }
 }
 
 // ---------- Carrito ----------
